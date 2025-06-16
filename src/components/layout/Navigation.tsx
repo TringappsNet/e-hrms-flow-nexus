@@ -17,7 +17,8 @@ import {
   BookOpen,
   UserPlus,
   BarChart3,
-  LogOut
+  LogOut,
+  Package
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
@@ -31,10 +32,11 @@ export const Navigation = () => {
     { icon: Users, label: "Employee Management", path: "/employees" },
     { icon: UserCheck, label: "Attendance", path: "/attendance" },
     { icon: Calendar, label: "Leave Management", path: "/leave" },
+    { icon: MapPin, label: "Transfer & Posting", path: "/transfers" },
+    { icon: BookOpen, label: "Training", path: "/training" },
+    { icon: Package, label: "Asset Management", path: "/assets" },
     { icon: DollarSign, label: "Payroll", path: "/payroll" },
     { icon: FileText, label: "Grievances", path: "/grievances" },
-    { icon: BookOpen, label: "Training", path: "/training" },
-    { icon: MapPin, label: "Transfer & Posting", path: "/transfers" },
     { icon: BarChart3, label: "Reports", path: "/reports" },
   ];
 
@@ -54,7 +56,7 @@ export const Navigation = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center space-x-1">
-            {menuItems.slice(0, 5).map((item) => (
+            {menuItems.slice(0, 6).map((item) => (
               <Button
                 key={item.path}
                 variant="ghost"

@@ -12,16 +12,23 @@ import {
   Search,
   Menu,
   Home,
-  Clock,
   MapPin,
   BookOpen,
-  UserPlus,
+  Package,
   BarChart3,
   LogOut,
-  Package
+  MessageSquare,
+  Shield,
+  User
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export const Navigation = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -29,14 +36,14 @@ export const Navigation = () => {
 
   const menuItems = [
     { icon: Home, label: "Dashboard", path: "/" },
-    { icon: Users, label: "Employee Management", path: "/employees" },
+    { icon: Users, label: "Employees", path: "/employees" },
     { icon: UserCheck, label: "Attendance", path: "/attendance" },
-    { icon: Calendar, label: "Leave Management", path: "/leave" },
-    { icon: MapPin, label: "Transfer & Posting", path: "/transfers" },
+    { icon: Calendar, label: "Leave", path: "/leave" },
+    { icon: MapPin, label: "Transfers", path: "/transfers" },
     { icon: BookOpen, label: "Training", path: "/training" },
-    { icon: Package, label: "Asset Management", path: "/assets" },
+    { icon: Package, label: "Assets", path: "/assets" },
     { icon: DollarSign, label: "Payroll", path: "/payroll" },
-    { icon: FileText, label: "Grievances", path: "/grievances" },
+    { icon: MessageSquare, label: "Grievances", path: "/grievances" },
     { icon: BarChart3, label: "Reports", path: "/reports" },
   ];
 
@@ -44,14 +51,17 @@ export const Navigation = () => {
     <header className="bg-white shadow-sm border-b sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          <div className="flex items-center space-x-4">
+          {/* Logo Section - Better Aligned */}
+          <div className="flex items-center space-x-3">
             <div className="flex items-center space-x-2 cursor-pointer" onClick={() => navigate("/")}>
-              <FileText className="h-8 w-8 text-blue-600" />
-              <h1 className="text-2xl font-bold text-gray-900">E-HRMS</h1>
+              <div className="bg-blue-600 p-2 rounded-lg">
+                <Shield className="h-6 w-6 text-white" />
+              </div>
+              <div className="flex flex-col">
+                <h1 className="text-xl font-bold text-gray-900 leading-tight">E-HRMS</h1>
+                <span className="text-xs text-blue-600 font-medium">Government Portal</span>
+              </div>
             </div>
-            <Badge variant="secondary" className="bg-blue-100 text-blue-800">
-              Government Edition
-            </Badge>
           </div>
 
           {/* Desktop Navigation */}
@@ -62,28 +72,65 @@ export const Navigation = () => {
                 variant="ghost"
                 size="sm"
                 onClick={() => navigate(item.path)}
-                className="flex items-center space-x-1"
+                className="flex items-center space-x-1 text-gray-600 hover:text-blue-600"
               >
                 <item.icon className="h-4 w-4" />
                 <span className="text-sm">{item.label}</span>
               </Button>
             ))}
+            
+            {/* More Menu */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="text-gray-600 hover:text-blue-600">
+                  More
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                {menuItems.slice(6).map((item) => (
+                  <DropdownMenuItem 
+                    key={item.path}
+                    onClick={() => navigate(item.path)}
+                    className="flex items-center space-x-2"
+                  >
+                    <item.icon className="h-4 w-4" />
+                    <span>{item.label}</span>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </nav>
 
-          <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="sm">
+          {/* Right Section */}
+          <div className="flex items-center space-x-3">
+            <Button variant="ghost" size="sm" className="hidden sm:flex">
               <Search className="h-4 w-4 mr-2" />
               Search
             </Button>
-            <Button variant="ghost" size="sm">
+            <Button variant="ghost" size="sm" className="relative">
               <Bell className="h-4 w-4" />
+              <Badge className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-xs">3</Badge>
             </Button>
-            <Button variant="ghost" size="sm">
-              <Settings className="h-4 w-4" />
-            </Button>
-            <Button variant="ghost" size="sm">
-              <LogOut className="h-4 w-4" />
-            </Button>
+            
+            {/* User Menu */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="flex items-center space-x-2">
+                  <User className="h-4 w-4" />
+                  <span className="hidden sm:block">Admin</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem>
+                  <Settings className="h-4 w-4 mr-2" />
+                  Settings
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Logout
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
             
             {/* Mobile menu button */}
             <Button
@@ -99,7 +146,7 @@ export const Navigation = () => {
 
         {/* Mobile Navigation */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden py-4 border-t">
+          <div className="lg:hidden py-4 border-t bg-gray-50">
             <div className="grid grid-cols-2 gap-2">
               {menuItems.map((item) => (
                 <Button

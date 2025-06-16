@@ -54,8 +54,8 @@ export const Navigation = () => {
           {/* Logo Section - Better Aligned */}
           <div className="flex items-center space-x-3">
             <div className="flex items-center space-x-2 cursor-pointer" onClick={() => navigate("/")}>
-              <div className="bg-blue-600 p-2 rounded-lg">
-                <Shield className="h-6 w-6 text-white" />
+              <div className="rounded-lg">
+                <img src="goa_logo.png" alt="Logo" className="rounded-lg h-14 w-14" />
               </div>
               <div className="flex flex-col">
                 <h1 className="text-xl font-bold text-gray-900 leading-tight">E-HRMS</h1>

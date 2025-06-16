@@ -74,11 +74,11 @@ export const DashboardStats = () => {
                   <div className="flex items-center mt-2">
                     <TrendingUp className={`h-4 w-4 mr-1 ${
                       stat.changeType === 'positive' ? 'text-green-600' : 
-                      stat.changeType === 'negative' ? 'text-red-600' : 'text-gray-600'
+                      stat.changeType === 'neutral' ? 'text-gray-600' : 'text-red-600'
                     }`} />
                     <span className={`text-sm font-medium ${
                       stat.changeType === 'positive' ? 'text-green-600' : 
-                      stat.changeType === 'negative' ? 'text-red-600' : 'text-gray-600'
+                      stat.changeType === 'neutral' ? 'text-gray-600' : 'text-red-600'
                     }`}>
                       {stat.change}
                     </span>

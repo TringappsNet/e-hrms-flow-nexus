@@ -1,62 +1,28 @@
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import {
-  Users,
-  UserCheck,
-  Calendar,
-  DollarSign,
-  FileText,
-  Settings,
-  Bell,
-  TrendingUp,
-  Clock,
-  AlertCircle,
-  CheckCircle,
-  BarChart3,
-  PlusCircle,
-  Download,
-  Search
-} from "lucide-react";
+import { Navigation } from "@/components/layout/Navigation";
 import { DashboardStats } from "@/components/dashboard/DashboardStats";
 import { RecentActivities } from "@/components/dashboard/RecentActivities";
 import { QuickActions } from "@/components/dashboard/QuickActions";
 import { AttendanceChart } from "@/components/dashboard/AttendanceChart";
 import { PayrollOverview } from "@/components/dashboard/PayrollOverview";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  Users,
+  UserCheck,
+  Calendar,
+  DollarSign,
+  BarChart3
+} from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Index = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2">
-                <FileText className="h-8 w-8 text-blue-600" />
-                <h1 className="text-2xl font-bold text-gray-900">E-HRMS</h1>
-              </div>
-              <Badge variant="secondary" className="bg-blue-100 text-blue-800">
-                Government Edition
-              </Badge>
-            </div>
-            <div className="flex items-center space-x-4">
-              <Button variant="ghost" size="sm">
-                <Search className="h-4 w-4 mr-2" />
-                Search
-              </Button>
-              <Button variant="ghost" size="sm">
-                <Bell className="h-4 w-4" />
-              </Button>
-              <Button variant="ghost" size="sm">
-                <Settings className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Navigation />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Welcome Section */}
@@ -101,7 +67,7 @@ const Index = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Button className="w-full" variant="outline">
+              <Button className="w-full" variant="outline" onClick={() => navigate("/employees")}>
                 Access Module
               </Button>
             </CardContent>
@@ -119,7 +85,7 @@ const Index = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Button className="w-full" variant="outline">
+              <Button className="w-full" variant="outline" onClick={() => navigate("/attendance")}>
                 Access Module
               </Button>
             </CardContent>
@@ -137,7 +103,7 @@ const Index = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Button className="w-full" variant="outline">
+              <Button className="w-full" variant="outline" onClick={() => navigate("/payroll")}>
                 Access Module
               </Button>
             </CardContent>
@@ -155,7 +121,7 @@ const Index = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Button className="w-full" variant="outline">
+              <Button className="w-full" variant="outline" onClick={() => navigate("/reports")}>
                 Access Module
               </Button>
             </CardContent>

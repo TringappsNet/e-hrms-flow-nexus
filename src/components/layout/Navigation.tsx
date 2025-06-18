@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,10 +18,10 @@ import {
   LogOut,
   MessageSquare,
   Shield,
-  User
+  User,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -33,7 +32,9 @@ import {
 export const Navigation = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
-
+  const location = useLocation();
+  const pathname = location.pathname;
+  console.log("url", pathname);
   const menuItems = [
     { icon: Home, label: "Dashboard", path: "/" },
     { icon: Users, label: "Employees", path: "/employees" },
@@ -53,13 +54,24 @@ export const Navigation = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo Section - Better Aligned */}
           <div className="flex items-center space-x-3">
-            <div className="flex items-center space-x-2 cursor-pointer" onClick={() => navigate("/")}>
+            <div
+              className="flex items-center space-x-2 cursor-pointer"
+              onClick={() => navigate("/")}
+            >
               <div className="rounded-lg">
-                <img src="goa_logo.png" alt="Logo" className="rounded-lg h-14 w-14" />
+                <img
+                  src="goa_logo.png"
+                  alt="Logo"
+                  className="rounded-lg h-14 w-14"
+                />
               </div>
               <div className="flex flex-col">
-                <h1 className="text-xl font-bold text-gray-900 leading-tight">E-HRMS</h1>
-                <span className="text-xs text-blue-600 font-medium">Government Portal</span>
+                <h1 className="text-xl font-bold text-gray-900 leading-tight">
+                  E-HRMS
+                </h1>
+                <span className="text-xs text-blue-600 font-medium">
+                  Government Portal
+                </span>
               </div>
             </div>
           </div>
@@ -72,23 +84,27 @@ export const Navigation = () => {
                 variant="ghost"
                 size="sm"
                 onClick={() => navigate(item.path)}
-                className="flex items-center space-x-1 text-gray-600 hover:text-blue-600"
+                className={`flex items-center space-x-1 text-gray-600 hover:text-blue-600 ${pathname == item.path ? " bg-[#f1f5f9] text-blue-600" : ""}`}
               >
                 <item.icon className="h-4 w-4" />
                 <span className="text-sm">{item.label}</span>
               </Button>
             ))}
-            
+
             {/* More Menu */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="text-gray-600 hover:text-blue-600">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className={`text-gray-600 hover:text-blue-600 ${ menuItems.slice(6).some((item) => item.path === pathname) ? " bg-[#f1f5f9] text-blue-600" : ""}`}
+                >
                   More
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
                 {menuItems.slice(6).map((item) => (
-                  <DropdownMenuItem 
+                  <DropdownMenuItem
                     key={item.path}
                     onClick={() => navigate(item.path)}
                     className="flex items-center space-x-2"
@@ -109,13 +125,19 @@ export const Navigation = () => {
             </Button>
             <Button variant="ghost" size="sm" className="relative">
               <Bell className="h-4 w-4" />
-              <Badge className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-xs">3</Badge>
+              <Badge className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-xs">
+                3
+              </Badge>
             </Button>
-            
+
             {/* User Menu */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="flex items-center space-x-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="flex items-center space-x-2"
+                >
                   <User className="h-4 w-4" />
                   <span className="hidden sm:block">Admin</span>
                 </Button>
@@ -131,7 +153,7 @@ export const Navigation = () => {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            
+
             {/* Mobile menu button */}
             <Button
               variant="ghost"

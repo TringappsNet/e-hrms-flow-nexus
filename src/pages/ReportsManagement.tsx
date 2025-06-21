@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Navigation } from "@/components/layout/Navigation";
+import { AppLayout } from "@/components/layout/AppLayout";
 import { BarChart3, Download, Calendar, Users, DollarSign, FileText, TrendingUp } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
@@ -72,8 +72,7 @@ const ReportsManagement = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-      <Navigation />
+    <AppLayout>
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-2">Reports & Analytics</h2>
@@ -189,7 +188,7 @@ const ReportsManagement = () => {
           </CardContent>
         </Card>
       </main>
-    </div>
+    </AppLayout>
   );
 };
 

@@ -5,63 +5,76 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { AppLayout } from "@/components/layout/AppLayout";
-import { mockPayroll, PayrollRecord } from "@/data/mockData";
-import { DollarSign, Plus, Search, Filter, Download, Calendar, Users, Edit, Eye } from "lucide-react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { DollarSign, Plus, Search, Filter, Eye, Download, Calculator } from "lucide-react";
 
 const PayrollManagement = () => {
-  const [payrollRecords, setPayrollRecords] = useState<PayrollRecord[]>(mockPayroll);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const filteredRecords = payrollRecords.filter(record =>
-    record.employeeName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    record.employeeId.toLowerCase().includes(searchTerm.toLowerCase())
+  const payrollData = [
+    {
+      id: "PAY001",
+      employeeId: "EMP001",
+      employeeName: "John Doe",
+      department: "Engineering",
+      basicSalary: 50000,
+      allowances: 15000,
+      deductions: 8000,
+      netSalary: 57000,
+      month: "January 2024",
+      status: "Processed"
+    },
+    {
+      id: "PAY002",
+      employeeId: "EMP002", 
+      employeeName: "Jane Smith",
+      department: "HR",
+      basicSalary: 45000,
+      allowances: 12000,
+      deductions: 7000,
+      netSalary: 50000,
+      month: "January 2024",
+      status: "Pending"
+    },
+    {
+      id: "PAY003",
+      employeeId: "EMP003",
+      employeeName: "Mike Johnson",
+      department: "Finance",
+      basicSalary: 55000,
+      allowances: 18000,
+      deductions: 9000,
+      netSalary: 64000,
+      month: "January 2024",
+      status: "Processed"
+    }
+  ];
+
+  const filteredPayroll = payrollData.filter(payroll =>
+    payroll.employeeName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    payroll.department.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    payroll.employeeId.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const getStatusBadge = (status: string) => {
     const statusColors = {
       'Processed': 'bg-green-100 text-green-800',
       'Pending': 'bg-yellow-100 text-yellow-800',
-      'On Hold': 'bg-red-100 text-red-800'
+      'Failed': 'bg-red-100 text-red-800'
     };
     return statusColors[status as keyof typeof statusColors] || 'bg-gray-100 text-gray-800';
   };
 
-  const totalPayroll = filteredRecords.reduce((sum, record) => sum + record.netSalary, 0);
-
-  const handleProcessPayroll = () => {
-    // Update pending records to processed
-    setPayrollRecords(prev => prev.map(record =>
-      record.status === 'Pending' ? { ...record, status: 'Processed' as const } : record
-    ));
-  };
-
-  const handleEditRecord = (recordId: string) => {
-    console.log('Editing record:', recordId);
-    // Add edit functionality here
-  };
-
-  const handleViewRecord = (recordId: string) => {
-    console.log('Viewing record:', recordId);
-    // Add view functionality here
-  };
+  const totalPayroll = filteredPayroll.reduce((sum, payroll) => sum + payroll.netSalary, 0);
 
   return (
     <AppLayout>
-      <div className="p-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-2">Payroll Management</h2>
           <p className="text-gray-600">Manage employee salaries and payroll processing</p>
         </div>
 
-        {/* Stats Cards */}
+        {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <Card>
             <CardContent className="p-6">
@@ -77,34 +90,32 @@ const PayrollManagement = () => {
           <Card>
             <CardContent className="p-6">
               <div className="flex items-center">
-                <Users className="h-8 w-8 text-blue-600" />
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Employees</p>
-                  <p className="text-2xl font-bold text-gray-900">{filteredRecords.length}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <Calendar className="h-8 w-8 text-purple-600" />
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Current Month</p>
-                  <p className="text-lg font-bold text-gray-900">January 2024</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <Filter className="h-8 w-8 text-orange-600" />
+                <Calculator className="h-8 w-8 text-blue-600" />
                 <div className="ml-4">
                   <p className="text-sm font-medium text-gray-600">Processed</p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {filteredRecords.filter(r => r.status === 'Processed').length}
-                  </p>
+                  <p className="text-2xl font-bold text-gray-900">{payrollData.filter(p => p.status === 'Processed').length}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center">
+                <Clock className="h-8 w-8 text-yellow-600" />
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-600">Pending</p>
+                  <p className="text-2xl font-bold text-gray-900">{payrollData.filter(p => p.status === 'Pending').length}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center">
+                <Download className="h-8 w-8 text-purple-600" />
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-600">Reports</p>
+                  <p className="text-2xl font-bold text-gray-900">12</p>
                 </div>
               </div>
             </CardContent>
@@ -119,16 +130,16 @@ const PayrollManagement = () => {
                   <DollarSign className="h-5 w-5 mr-2 text-blue-600" />
                   Payroll Records
                 </CardTitle>
-                <CardDescription>View and manage employee payroll</CardDescription>
+                <CardDescription>Monthly salary processing and records</CardDescription>
               </div>
               <div className="flex space-x-2">
                 <Button variant="outline">
-                  <Download className="h-4 w-4 mr-2" />
-                  Export
-                </Button>
-                <Button onClick={handleProcessPayroll}>
-                  <Plus className="h-4 w-4 mr-2" />
+                  <Calculator className="h-4 w-4 mr-2" />
                   Process Payroll
+                </Button>
+                <Button>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Generate Payslip
                 </Button>
               </div>
             </div>
@@ -139,7 +150,7 @@ const PayrollManagement = () => {
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                   <Input
-                    placeholder="Search employees..."
+                    placeholder="Search payroll records..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10"
@@ -152,65 +163,61 @@ const PayrollManagement = () => {
               </Button>
             </div>
 
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Employee</TableHead>
-                  <TableHead>Month</TableHead>
-                  <TableHead>Basic Salary</TableHead>
-                  <TableHead>Allowances</TableHead>
-                  <TableHead>Deductions</TableHead>
-                  <TableHead>Net Salary</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredRecords.map((record) => (
-                  <TableRow key={record.id}>
-                    <TableCell>
-                      <div>
-                        <div className="font-medium">{record.employeeName}</div>
-                        <div className="text-sm text-gray-600">{record.employeeId}</div>
-                      </div>
-                    </TableCell>
-                    <TableCell>{record.month}</TableCell>
-                    <TableCell>₹{record.basicSalary.toLocaleString()}</TableCell>
-                    <TableCell>₹{record.allowances.toLocaleString()}</TableCell>
-                    <TableCell>₹{record.deductions.toLocaleString()}</TableCell>
-                    <TableCell className="font-medium">₹{record.netSalary.toLocaleString()}</TableCell>
-                    <TableCell>
-                      <Badge className={getStatusBadge(record.status)} variant="secondary">
-                        {record.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex space-x-2">
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => handleViewRecord(record.id)}
-                        >
-                          <Eye className="h-4 w-4 mr-1" />
-                          View
-                        </Button>
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => handleEditRecord(record.id)}
-                        >
-                          <Edit className="h-4 w-4 mr-1" />
-                          Edit
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            <div className="overflow-x-auto">
+              <table className="w-full table-auto">
+                <thead>
+                  <tr className="border-b">
+                    <th className="text-left py-3 px-4">Employee</th>
+                    <th className="text-left py-3 px-4">Department</th>
+                    <th className="text-left py-3 px-4">Basic Salary</th>
+                    <th className="text-left py-3 px-4">Allowances</th>
+                    <th className="text-left py-3 px-4">Deductions</th>
+                    <th className="text-left py-3 px-4">Net Salary</th>
+                    <th className="text-left py-3 px-4">Month</th>
+                    <th className="text-left py-3 px-4">Status</th>
+                    <th className="text-left py-3 px-4">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredPayroll.map((payroll) => (
+                    <tr key={payroll.id} className="border-b hover:bg-gray-50">
+                      <td className="py-3 px-4">
+                        <div>
+                          <div className="font-medium">{payroll.employeeName}</div>
+                          <div className="text-sm text-gray-500">{payroll.employeeId}</div>
+                        </div>
+                      </td>
+                      <td className="py-3 px-4">{payroll.department}</td>
+                      <td className="py-3 px-4">₹{payroll.basicSalary.toLocaleString()}</td>
+                      <td className="py-3 px-4">₹{payroll.allowances.toLocaleString()}</td>
+                      <td className="py-3 px-4">₹{payroll.deductions.toLocaleString()}</td>
+                      <td className="py-3 px-4 font-semibold">₹{payroll.netSalary.toLocaleString()}</td>
+                      <td className="py-3 px-4">{payroll.month}</td>
+                      <td className="py-3 px-4">
+                        <Badge className={getStatusBadge(payroll.status)} variant="secondary">
+                          {payroll.status}
+                        </Badge>
+                      </td>
+                      <td className="py-3 px-4">
+                        <div className="flex space-x-2">
+                          <Button variant="outline" size="sm">
+                            <Eye className="h-3 w-3 mr-1" />
+                            View
+                          </Button>
+                          <Button variant="outline" size="sm">
+                            <Download className="h-3 w-3 mr-1" />
+                            Payslip
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </CardContent>
         </Card>
-      </div>
+      </main>
     </AppLayout>
   );
 };

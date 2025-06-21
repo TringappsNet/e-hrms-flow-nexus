@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Navigation } from "@/components/layout/Navigation";
+import { AppLayout } from "@/components/layout/AppLayout";
 import { mockTrainings, Training, TrainingEnrollment, mockEmployees } from "@/data/mockData";
 import { TrainingForm } from "@/components/training/TrainingForm";
 import { BookOpen, Plus, Search, Filter, Users, Calendar, MapPin } from "lucide-react";
@@ -41,21 +41,19 @@ const TrainingManagement = () => {
 
   if (showForm) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-        <Navigation />
+      <AppLayout>
         <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <TrainingForm
             onSubmit={handleAddTraining}
             onCancel={() => setShowForm(false)}
           />
         </main>
-      </div>
+      </AppLayout>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-      <Navigation />
+    <AppLayout>
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-2">Training Management</h2>
@@ -147,7 +145,7 @@ const TrainingManagement = () => {
           </CardContent>
         </Card>
       </main>
-    </div>
+    </AppLayout>
   );
 };
 

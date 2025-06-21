@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,11 +9,12 @@ import { Transfer, mockEmployees, departments } from "@/data/mockData";
 import { MapPin, ArrowLeft } from "lucide-react";
 
 interface TransferFormProps {
+  transfer?: Transfer | null;
   onSubmit: (transfer: Omit<Transfer, 'id'>) => void;
   onCancel: () => void;
 }
 
-export const TransferForm = ({ onSubmit, onCancel }: TransferFormProps) => {
+export const TransferForm = ({ transfer, onSubmit, onCancel }: TransferFormProps) => {
   const [formData, setFormData] = useState({
     employeeId: '',
     employeeName: '',
@@ -27,6 +28,23 @@ export const TransferForm = ({ onSubmit, onCancel }: TransferFormProps) => {
     orderId: `TO-${new Date().getFullYear()}-${String(Date.now()).slice(-3)}`
   });
 
+  useEffect(() => {
+    if (transfer) {
+      setFormData({
+        employeeId: transfer.employeeId,
+        employeeName: transfer.employeeName,
+        fromDepartment: transfer.fromDepartment,
+        toDepartment: transfer.toDepartment,
+        fromLocation: transfer.fromLocation,
+        toLocation: transfer.toLocation,
+        transferDate: transfer.transferDate,
+        reason: transfer.reason,
+        status: transfer.status,
+        orderId: transfer.orderId
+      });
+    }
+  }, [transfer]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit(formData);
@@ -36,7 +54,7 @@ export const TransferForm = ({ onSubmit, onCancel }: TransferFormProps) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     
     // Auto-populate employee details when employee is selected
-    if (field === 'employeeId') {
+    if (field === 'employeeId' && !transfer) {
       const employee = mockEmployees.find(emp => emp.employeeId === value);
       if (employee) {
         setFormData(prev => ({
@@ -58,10 +76,10 @@ export const TransferForm = ({ onSubmit, onCancel }: TransferFormProps) => {
           <div>
             <CardTitle className="flex items-center">
               <MapPin className="h-5 w-5 mr-2 text-blue-600" />
-              Transfer Application
+              {transfer ? 'Edit Transfer' : 'Transfer Application'}
             </CardTitle>
             <CardDescription>
-              Submit transfer request for employee
+              {transfer ? 'Update transfer request details' : 'Submit transfer request for employee'}
             </CardDescription>
           </div>
         </div>
@@ -71,20 +89,29 @@ export const TransferForm = ({ onSubmit, onCancel }: TransferFormProps) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="employeeId">Employee ID</Label>
-              <select
-                id="employeeId"
-                value={formData.employeeId}
-                onChange={(e) => handleChange('employeeId', e.target.value)}
-                className="w-full h-10 px-3 py-2 border border-input bg-background rounded-md text-sm"
-                required
-              >
-                <option value="">Select Employee</option>
-                {mockEmployees.map(emp => (
-                  <option key={emp.employeeId} value={emp.employeeId}>
-                    {emp.employeeId} - {emp.name}
-                  </option>
-                ))}
-              </select>
+              {transfer ? (
+                <Input
+                  id="employeeId"
+                  value={formData.employeeId}
+                  readOnly
+                  className="bg-gray-50"
+                />
+              ) : (
+                <select
+                  id="employeeId"
+                  value={formData.employeeId}
+                  onChange={(e) => handleChange('employeeId', e.target.value)}
+                  className="w-full h-10 px-3 py-2 border border-input bg-background rounded-md text-sm"
+                  required
+                >
+                  <option value="">Select Employee</option>
+                  {mockEmployees.map(emp => (
+                    <option key={emp.employeeId} value={emp.employeeId}>
+                      {emp.employeeId} - {emp.name}
+                    </option>
+                  ))}
+                </select>
+              )}
             </div>
             <div>
               <Label htmlFor="employeeName">Employee Name</Label>
@@ -182,7 +209,7 @@ export const TransferForm = ({ onSubmit, onCancel }: TransferFormProps) => {
 
           <div className="flex space-x-4">
             <Button type="submit" className="flex-1">
-              Submit Transfer Request
+              {transfer ? 'Update Transfer Request' : 'Submit Transfer Request'}
             </Button>
             <Button type="button" variant="outline" onClick={onCancel}>
               Cancel

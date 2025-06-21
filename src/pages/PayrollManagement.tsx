@@ -4,9 +4,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Navigation } from "@/components/layout/Navigation";
+import { AppLayout } from "@/components/layout/AppLayout";
 import { mockPayroll, PayrollRecord } from "@/data/mockData";
-import { DollarSign, Plus, Search, Filter, Download, Calendar, Users } from "lucide-react";
+import { DollarSign, Plus, Search, Filter, Download, Calendar, Users, Edit, Eye } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -36,10 +36,26 @@ const PayrollManagement = () => {
 
   const totalPayroll = filteredRecords.reduce((sum, record) => sum + record.netSalary, 0);
 
+  const handleProcessPayroll = () => {
+    // Update pending records to processed
+    setPayrollRecords(prev => prev.map(record =>
+      record.status === 'Pending' ? { ...record, status: 'Processed' as const } : record
+    ));
+  };
+
+  const handleEditRecord = (recordId: string) => {
+    console.log('Editing record:', recordId);
+    // Add edit functionality here
+  };
+
+  const handleViewRecord = (recordId: string) => {
+    console.log('Viewing record:', recordId);
+    // Add view functionality here
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-      <Navigation />
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <AppLayout>
+      <div className="p-8">
         <div className="mb-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-2">Payroll Management</h2>
           <p className="text-gray-600">Manage employee salaries and payroll processing</p>
@@ -110,7 +126,7 @@ const PayrollManagement = () => {
                   <Download className="h-4 w-4 mr-2" />
                   Export
                 </Button>
-                <Button>
+                <Button onClick={handleProcessPayroll}>
                   <Plus className="h-4 w-4 mr-2" />
                   Process Payroll
                 </Button>
@@ -170,8 +186,22 @@ const PayrollManagement = () => {
                     </TableCell>
                     <TableCell>
                       <div className="flex space-x-2">
-                        <Button variant="outline" size="sm">View</Button>
-                        <Button variant="outline" size="sm">Edit</Button>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => handleViewRecord(record.id)}
+                        >
+                          <Eye className="h-4 w-4 mr-1" />
+                          View
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => handleEditRecord(record.id)}
+                        >
+                          <Edit className="h-4 w-4 mr-1" />
+                          Edit
+                        </Button>
                       </div>
                     </TableCell>
                   </TableRow>
@@ -180,8 +210,8 @@ const PayrollManagement = () => {
             </Table>
           </CardContent>
         </Card>
-      </main>
-    </div>
+      </div>
+    </AppLayout>
   );
 };
 

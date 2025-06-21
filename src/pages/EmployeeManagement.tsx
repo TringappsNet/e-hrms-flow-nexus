@@ -20,7 +20,7 @@ const EmployeeManagement = () => {
   const filteredEmployees = employees.filter(employee =>
     employee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     employee.department.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    employee.position.toLowerCase().includes(searchTerm.toLowerCase())
+    employee.designation.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleAddEmployee = (employeeData: Omit<Employee, "id">) => {
@@ -133,7 +133,7 @@ const EmployeeManagement = () => {
                     <th className="text-left py-3 px-4">Employee ID</th>
                     <th className="text-left py-3 px-4">Name</th>
                     <th className="text-left py-3 px-4">Department</th>
-                    <th className="text-left py-3 px-4">Position</th>
+                    <th className="text-left py-3 px-4">Designation</th>
                     <th className="text-left py-3 px-4">Status</th>
                     <th className="text-left py-3 px-4">Actions</th>
                   </tr>
@@ -141,15 +141,17 @@ const EmployeeManagement = () => {
                 <tbody>
                   {filteredEmployees.map((employee) => (
                     <tr key={employee.id} className="border-b hover:bg-gray-50">
-                      <td className="py-3 px-4 font-medium">{employee.id}</td>
+                      <td className="py-3 px-4 font-medium">{employee.employeeId}</td>
                       <td className="py-3 px-4">{employee.name}</td>
                       <td className="py-3 px-4">{employee.department}</td>
-                      <td className="py-3 px-4">{employee.position}</td>
+                      <td className="py-3 px-4">{employee.designation}</td>
                       <td className="py-3 px-4">
                         <Badge
                           className={
                             employee.status === "Active"
                               ? "bg-green-100 text-green-800"
+                              : employee.status === "On Leave"
+                              ? "bg-yellow-100 text-yellow-800"
                               : "bg-red-100 text-red-800"
                           }
                           variant="secondary"

@@ -1,11 +1,10 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { AppLayout } from "@/components/layout/AppLayout";
-import { DollarSign, Plus, Search, Filter, Eye, Download, Calculator } from "lucide-react";
+import { DollarSign, Plus, Search, Filter, Eye, Download, Calculator, Clock } from "lucide-react";
 
 const PayrollManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");

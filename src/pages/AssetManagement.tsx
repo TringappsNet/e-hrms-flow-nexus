@@ -17,8 +17,8 @@ const AssetManagement = () => {
 
   const filteredAssets = assets.filter(asset =>
     asset.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    asset.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    asset.assignedTo.toLowerCase().includes(searchTerm.toLowerCase())
+    asset.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (asset.assignedEmployee && asset.assignedEmployee.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   const handleAddAsset = (assetData: Omit<Asset, 'id'>) => {
@@ -35,7 +35,7 @@ const AssetManagement = () => {
       'Available': 'bg-green-100 text-green-800',
       'Assigned': 'bg-blue-100 text-blue-800',
       'Under Maintenance': 'bg-yellow-100 text-yellow-800',
-      'Damaged': 'bg-red-100 text-red-800'
+      'Disposed': 'bg-red-100 text-red-800'
     };
     return statusColors[status as keyof typeof statusColors] || 'bg-gray-100 text-gray-800';
   };
@@ -102,7 +102,7 @@ const AssetManagement = () => {
                   <tr className="border-b">
                     <th className="text-left py-3 px-4">Asset ID</th>
                     <th className="text-left py-3 px-4">Name</th>
-                    <th className="text-left py-3 px-4">Category</th>
+                    <th className="text-left py-3 px-4">Type</th>
                     <th className="text-left py-3 px-4">Assigned To</th>
                     <th className="text-left py-3 px-4">Purchase Date</th>
                     <th className="text-left py-3 px-4">Value</th>
@@ -113,10 +113,10 @@ const AssetManagement = () => {
                 <tbody>
                   {filteredAssets.map((asset) => (
                     <tr key={asset.id} className="border-b hover:bg-gray-50">
-                      <td className="py-3 px-4 font-medium">{asset.id}</td>
+                      <td className="py-3 px-4 font-medium">{asset.assetId}</td>
                       <td className="py-3 px-4">{asset.name}</td>
-                      <td className="py-3 px-4">{asset.category}</td>
-                      <td className="py-3 px-4">{asset.assignedTo}</td>
+                      <td className="py-3 px-4">{asset.type}</td>
+                      <td className="py-3 px-4">{asset.assignedEmployee || 'Unassigned'}</td>
                       <td className="py-3 px-4">{new Date(asset.purchaseDate).toLocaleDateString()}</td>
                       <td className="py-3 px-4">₹{asset.value.toLocaleString()}</td>
                       <td className="py-3 px-4">

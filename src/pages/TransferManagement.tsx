@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { mockTransfers, Transfer, mockEmployees, departments } from "@/data/mockData";
 import { TransferForm } from "@/components/transfer/TransferForm";
+import { TransferDetailView } from "@/components/transfer/TransferDetailView";
 import { MapPin, Plus, Search, Filter, FileText, Calendar, History, Eye, Edit, Trash2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -24,6 +25,7 @@ const TransferManagement = () => {
   const [showForm, setShowForm] = useState(false);
   const [selectedTransfer, setSelectedTransfer] = useState<Transfer | null>(null);
   const [editingTransfer, setEditingTransfer] = useState<Transfer | null>(null);
+  const [viewMode, setViewMode] = useState<'list' | 'detail'>('list');
 
   const filteredTransfers = transfers.filter(transfer =>
     transfer.employeeName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -59,6 +61,12 @@ const TransferManagement = () => {
     ));
   };
 
+  const handleRejectTransfer = (transferId: string) => {
+    setTransfers(prev => prev.map(transfer =>
+      transfer.id === transferId ? { ...transfer, status: 'Pending' as const } : transfer
+    ));
+  };
+
   const handleDeleteTransfer = (transferId: string) => {
     setTransfers(prev => prev.filter(transfer => transfer.id !== transferId));
   };
@@ -82,6 +90,38 @@ const TransferManagement = () => {
             onCancel={() => {
               setShowForm(false);
               setEditingTransfer(null);
+            }}
+          />
+        </div>
+      </AppLayout>
+    );
+  }
+
+  if (selectedTransfer && viewMode === 'detail') {
+    return (
+      <AppLayout>
+        <div className="p-8">
+          <TransferDetailView
+            transfer={selectedTransfer}
+            onBack={() => {
+              setSelectedTransfer(null);
+              setViewMode('list');
+            }}
+            onEdit={() => {
+              setEditingTransfer(selectedTransfer);
+              setSelectedTransfer(null);
+              setViewMode('list');
+              setShowForm(true);
+            }}
+            onApprove={() => {
+              handleApproveTransfer(selectedTransfer.id);
+              setSelectedTransfer(null);
+              setViewMode('list');
+            }}
+            onReject={() => {
+              handleRejectTransfer(selectedTransfer.id);
+              setSelectedTransfer(null);
+              setViewMode('list');
             }}
           />
         </div>
@@ -197,10 +237,13 @@ const TransferManagement = () => {
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={() => setSelectedTransfer(transfer)}
+                              onClick={() => {
+                                setSelectedTransfer(transfer);
+                                setViewMode('detail');
+                              }}
                             >
                               <Eye className="h-4 w-4 mr-1" />
-                              View
+                              View Details
                             </Button>
                             <Button
                               variant="outline"
@@ -291,10 +334,23 @@ const TransferManagement = () => {
                         </TableCell>
                         <TableCell>{transfer.orderId}</TableCell>
                         <TableCell>
-                          <Button variant="outline" size="sm">
-                            <FileText className="h-4 w-4 mr-1" />
-                            View Order
-                          </Button>
+                          <div className="flex space-x-2">
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => {
+                                setSelectedTransfer(transfer);
+                                setViewMode('detail');
+                              }}
+                            >
+                              <Eye className="h-4 w-4 mr-1" />
+                              View
+                            </Button>
+                            <Button variant="outline" size="sm">
+                              <FileText className="h-4 w-4 mr-1" />
+                              Order
+                            </Button>
+                          </div>
                         </TableCell>
                       </TableRow>
                     ))}

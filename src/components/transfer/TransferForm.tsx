@@ -24,7 +24,7 @@ export const TransferForm = ({ transfer, onSubmit, onCancel }: TransferFormProps
     toLocation: '',
     transferDate: '',
     reason: '',
-    status: 'Pending' as const,
+    status: 'Pending' as 'Pending' | 'Approved' | 'Completed',
     orderId: `TO-${new Date().getFullYear()}-${String(Date.now()).slice(-3)}`
   });
 

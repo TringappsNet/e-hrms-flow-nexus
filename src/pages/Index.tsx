@@ -8,38 +8,146 @@ import { RecentActivities } from "@/components/dashboard/RecentActivities";
 import { QuickActions } from "@/components/dashboard/QuickActions";
 import { PayrollOverview } from "@/components/dashboard/PayrollOverview";
 import { useNavigate } from "react-router-dom";
+import { Users, Calendar, Award, DollarSign, Package, MessageSquare, BarChart3, TrendingUp } from "lucide-react";
 
 const Index = () => {
   const navigate = useNavigate();
 
+  const quickAccessCards = [
+    {
+      title: "Employee Management",
+      description: "Manage employee records, service books, and promotions",
+      icon: Users,
+      path: "/employees",
+      color: "from-blue-500 to-blue-600",
+      bgColor: "bg-blue-50",
+      iconColor: "text-blue-600"
+    },
+    {
+      title: "Attendance & Time",
+      description: "Track attendance, shifts, and overtime",
+      icon: Calendar,
+      path: "/attendance",
+      color: "from-green-500 to-green-600",
+      bgColor: "bg-green-50",
+      iconColor: "text-green-600"
+    },
+    {
+      title: "Performance (APAR)",
+      description: "Annual performance assessments and reviews",
+      icon: Award,
+      path: "/performance",
+      color: "from-purple-500 to-purple-600",
+      bgColor: "bg-purple-50",
+      iconColor: "text-purple-600"
+    },
+    {
+      title: "Payroll & Finance",
+      description: "Salary management, TDS, and benefits",
+      icon: DollarSign,
+      path: "/payroll",
+      color: "from-emerald-500 to-emerald-600",
+      bgColor: "bg-emerald-50",
+      iconColor: "text-emerald-600"
+    },
+    {
+      title: "Asset Management",
+      description: "Track and manage organizational assets",
+      icon: Package,
+      path: "/assets",
+      color: "from-orange-500 to-orange-600",
+      bgColor: "bg-orange-50",
+      iconColor: "text-orange-600"
+    },
+    {
+      title: "Reports & Analytics",
+      description: "Comprehensive reporting and insights",
+      icon: BarChart3,
+      path: "/reports",
+      color: "from-indigo-500 to-indigo-600",
+      bgColor: "bg-indigo-50",
+      iconColor: "text-indigo-600"
+    }
+  ];
+
   return (
     <AppLayout>
-      <div className="p-8">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+      <div className="space-y-8">
+        <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-xl p-8 text-white shadow-xl">
+          <h1 className="text-4xl font-bold mb-3">
             Welcome to E-HRMS Portal
           </h1>
-          <p className="text-gray-600 text-lg">
+          <p className="text-blue-100 text-lg opacity-90">
             Comprehensive Human Resource Management System for Government Departments
           </p>
-        </div>
-
-        <div className="grid gap-6">
-          {/* Dashboard Stats */}
-          <DashboardStats />
-
-          {/* Quick Actions */}
-          <QuickActions />
-
-          {/* Charts and Analytics */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <AttendanceChart />
-            <PayrollOverview />
+          <div className="mt-6 flex space-x-4">
+            <Button 
+              variant="secondary" 
+              onClick={() => navigate("/employees")}
+              className="bg-white text-blue-600 hover:bg-blue-50"
+            >
+              Manage Employees
+            </Button>
+            <Button 
+              variant="outline" 
+              onClick={() => navigate("/reports")}
+              className="border-white text-white hover:bg-white hover:text-blue-600"
+            >
+              View Reports
+            </Button>
           </div>
-
-          {/* Recent Activities */}
-          <RecentActivities />
         </div>
+
+        {/* Dashboard Stats */}
+        <DashboardStats />
+
+        {/* Quick Access Cards */}
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Quick Access</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {quickAccessCards.map((card) => (
+              <Card 
+                key={card.path} 
+                className="cursor-pointer hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 border-0 shadow-md"
+                onClick={() => navigate(card.path)}
+              >
+                <CardHeader className={`${card.bgColor} border-b`}>
+                  <div className="flex items-center">
+                    <div className={`p-3 rounded-lg bg-white shadow-sm`}>
+                      <card.icon className={`h-6 w-6 ${card.iconColor}`} />
+                    </div>
+                    <div className="ml-4">
+                      <CardTitle className="text-gray-900 text-lg">{card.title}</CardTitle>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="p-6">
+                  <CardDescription className="text-gray-600 text-base leading-relaxed">
+                    {card.description}
+                  </CardDescription>
+                  <Button 
+                    variant="ghost" 
+                    className={`mt-4 w-full ${card.iconColor} hover:bg-gray-50`}
+                  >
+                    Access Module
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+
+        {/* Quick Actions */}
+        <QuickActions />
+
+        {/* Charts and Analytics */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <AttendanceChart />
+          <PayrollOverview />
+        </div>
+
+        {/* Recent Activities */}
+        <RecentActivities />
       </div>
     </AppLayout>
   );

@@ -179,7 +179,7 @@ export const Sidebar = () => {
   return (
     <div className={`bg-white shadow-xl border-r border-gray-200 transition-all duration-300 ${isCollapsed ? 'w-16' : 'w-72'} min-h-screen flex flex-col fixed left-0 top-0 z-50`}>
       {/* Header */}
-      <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-gray-800 to-gray-900 flex-shrink-0">
+      <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-blue-600 to-blue-700">
         <div className="flex items-center justify-between">
           {!isCollapsed && (
             <div className="flex items-center space-x-3">
@@ -192,7 +192,7 @@ export const Sidebar = () => {
                 <h1 className="text-xl font-bold text-white leading-tight">
                   E-HRMS
                 </h1>
-                <span className="text-xs text-gray-200 font-medium">
+                <span className="text-xs text-blue-100 font-medium">
                   Government Portal
                 </span>
               </div>
@@ -202,7 +202,7 @@ export const Sidebar = () => {
             variant="ghost"
             size="sm"
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="ml-auto text-white hover:bg-gray-700 bg-gray-800 border border-gray-600"
+            className="ml-auto text-white hover:bg-blue-800"
           >
             {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
           </Button>
@@ -210,91 +210,87 @@ export const Sidebar = () => {
       </div>
 
       {/* Navigation Menu */}
-      <div className="flex-1 flex flex-col min-h-0">
-        <ScrollArea className="flex-1 px-3 py-4">
-          <div className="space-y-1">
-            {menuCategories.map((category) => {
-              if (category.path) {
-                // Single menu item
-                return (
+      <div className="flex-1 px-3 py-4 overflow-y-auto">
+        <div className="space-y-1">
+          {menuCategories.map((category) => {
+            if (category.path) {
+              // Single menu item
+              return (
+                <Button
+                  key={category.path}
+                  variant="ghost"
+                  onClick={() => navigate(category.path)}
+                  className={`w-full justify-start text-left transition-all duration-200 ${
+                    isPathActive(category.path)
+                      ? "bg-blue-50 text-blue-700 border-r-4 border-blue-600 shadow-sm" 
+                      : "text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+                  } ${isCollapsed ? 'px-2' : 'px-3'}`}
+                >
+                  <category.icon className={`h-5 w-5 ${isCollapsed ? '' : 'mr-3'}`} />
+                  {!isCollapsed && <span className="font-medium">{category.label}</span>}
+                </Button>
+              );
+            } else {
+              // Menu with sub-items
+              const isExpanded = isMenuExpanded(category.id!);
+              const hasActiveChild = hasActiveSubItem(category.subItems || []);
+              
+              return (
+                <div key={category.id} className="space-y-1">
                   <Button
-                    key={category.path}
                     variant="ghost"
-                    onClick={() => navigate(category.path)}
+                    onClick={() => !isCollapsed && toggleMenu(category.id!)}
                     className={`w-full justify-start text-left transition-all duration-200 ${
-                      isPathActive(category.path)
-                        ? "bg-gray-800 text-white border-r-4 border-gray-600 shadow-sm" 
-                        : "text-gray-700 hover:text-white hover:bg-gray-800"
-                    } ${isCollapsed ? 'px-2' : 'px-3'} bg-gray-800 text-white hover:bg-gray-700`}
+                      hasActiveChild
+                        ? "bg-blue-50 text-blue-700 shadow-sm" 
+                        : "text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+                    } ${isCollapsed ? 'px-2' : 'px-3'}`}
                   >
                     <category.icon className={`h-5 w-5 ${isCollapsed ? '' : 'mr-3'}`} />
-                    {!isCollapsed && <span className="font-medium">{category.label}</span>}
-                  </Button>
-                );
-              } else {
-                // Menu with sub-items
-                const isExpanded = isMenuExpanded(category.id!);
-                const hasActiveChild = hasActiveSubItem(category.subItems || []);
-                
-                return (
-                  <div key={category.id} className="space-y-1">
-                    <Button
-                      variant="ghost"
-                      onClick={() => !isCollapsed && toggleMenu(category.id!)}
-                      className={`w-full justify-start text-left transition-all duration-200 ${
-                        hasActiveChild
-                          ? "bg-gray-800 text-white shadow-sm" 
-                          : "text-gray-700 hover:text-white hover:bg-gray-800"
-                      } ${isCollapsed ? 'px-2' : 'px-3'} bg-gray-800 text-white hover:bg-gray-700`}
-                    >
-                      <category.icon className={`h-5 w-5 ${isCollapsed ? '' : 'mr-3'}`} />
-                      {!isCollapsed && (
-                        <>
-                          <span className="font-medium flex-1">{category.label}</span>
-                          <div className="transition-transform duration-200">
-                            {isExpanded ? (
-                              <ChevronUp className="h-4 w-4" />
-                            ) : (
-                              <ChevronDown className="h-4 w-4" />
-                            )}
-                          </div>
-                        </>
-                      )}
-                    </Button>
-                    
-                    {!isCollapsed && isExpanded && category.subItems && (
-                      <div className="ml-6 space-y-1 max-h-64 overflow-y-auto">
-                        {category.subItems.map((subItem) => (
-                          <Button
-                            key={subItem.path}
-                            variant="ghost"
-                            onClick={() => navigate(subItem.path)}
-                            className={`w-full justify-start text-left text-sm transition-all duration-200 ${
-                              isPathActive(subItem.path)
-                                ? "bg-gray-700 text-white border-r-2 border-gray-500" 
-                                : "text-gray-300 hover:text-white hover:bg-gray-700"
-                            } px-3 py-2 bg-gray-700 text-white hover:bg-gray-600`}
-                          >
-                            <subItem.icon className="h-4 w-4 mr-3" />
-                            <span>{subItem.label}</span>
-                          </Button>
-                        ))}
-                      </div>
+                    {!isCollapsed && (
+                      <>
+                        <span className="font-medium flex-1">{category.label}</span>
+                        {isExpanded ? (
+                          <ChevronUp className="h-4 w-4" />
+                        ) : (
+                          <ChevronDown className="h-4 w-4" />
+                        )}
+                      </>
                     )}
-                  </div>
-                );
-              }
-            })}
-          </div>
-        </ScrollArea>
+                  </Button>
+                  
+                  {!isCollapsed && isExpanded && category.subItems && (
+                    <div className="ml-6 space-y-1">
+                      {category.subItems.map((subItem) => (
+                        <Button
+                          key={subItem.path}
+                          variant="ghost"
+                          onClick={() => navigate(subItem.path)}
+                          className={`w-full justify-start text-left text-sm transition-all duration-200 ${
+                            isPathActive(subItem.path)
+                              ? "bg-blue-100 text-blue-700 border-r-2 border-blue-500" 
+                              : "text-gray-600 hover:text-blue-600 hover:bg-gray-50"
+                          } px-3 py-2`}
+                        >
+                          <subItem.icon className="h-4 w-4 mr-3" />
+                          <span>{subItem.label}</span>
+                        </Button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            }
+          })}
+        </div>
       </div>
 
       {/* Bottom Section */}
-      <div className="p-3 border-t border-gray-200 bg-gray-50 flex-shrink-0">
+      <div className="p-3 border-t border-gray-200 bg-gray-50">
         <div className="space-y-2">
           <Button
             variant="ghost"
-            className={`w-full justify-start relative transition-all duration-200 text-white hover:text-white hover:bg-gray-700 ${isCollapsed ? 'px-2' : 'px-3'} bg-gray-800`}
+            className={`w-full justify-start relative transition-all duration-200 text-gray-700 hover:text-blue-600 hover:bg-gray-100 ${isCollapsed ? 'px-2' : 'px-3'}`}
           >
             <Bell className={`h-5 w-5 ${isCollapsed ? '' : 'mr-3'}`} />
             {!isCollapsed && <span className="font-medium">Notifications</span>}
@@ -307,7 +303,7 @@ export const Sidebar = () => {
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
-                className={`w-full justify-start transition-all duration-200 text-white hover:text-white hover:bg-gray-700 ${isCollapsed ? 'px-2' : 'px-3'} bg-gray-800`}
+                className={`w-full justify-start transition-all duration-200 text-gray-700 hover:text-blue-600 hover:bg-gray-100 ${isCollapsed ? 'px-2' : 'px-3'}`}
               >
                 <User className={`h-5 w-5 ${isCollapsed ? '' : 'mr-3'}`} />
                 {!isCollapsed && <span className="font-medium">Admin</span>}

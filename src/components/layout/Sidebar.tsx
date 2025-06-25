@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
@@ -10,7 +10,6 @@ import {
   FileText,
   Settings,
   Bell,
-  Search,
   Home,
   MapPin,
   BookOpen,
@@ -18,7 +17,6 @@ import {
   BarChart3,
   LogOut,
   MessageSquare,
-  Shield,
   User,
   ChevronLeft,
   ChevronRight,
@@ -37,6 +35,9 @@ import {
   Calculator,
   Receipt,
   CreditCard,
+  List,
+  Fingerprint,
+  CalendarClock,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -53,6 +54,21 @@ export const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const pathname = location.pathname;
+
+  // Auto-expand menu if current path is in submenu
+  useEffect(() => {
+    const findParentMenu = () => {
+      for (const category of menuCategories) {
+        if (category.subItems) {
+          const hasActiveSubItem = category.subItems.some(item => pathname === item.path);
+          if (hasActiveSubItem && !expandedMenus.includes(category.id!)) {
+            setExpandedMenus(prev => [...prev, category.id!]);
+          }
+        }
+      }
+    };
+    findParentMenu();
+  }, [pathname]);
 
   const toggleMenu = (menuId: string) => {
     setExpandedMenus(prev => 
@@ -73,7 +89,7 @@ export const Sidebar = () => {
         { icon: FileText, label: "Service Book", path: "/service-book" },
         { icon: Award, label: "Promotions", path: "/promotions" },
         { icon: Star, label: "Performance (APAR)", path: "/performance" },
-        { icon: BarChart3, label: "Seniority Lists", path: "/seniority" },
+        { icon: List, label: "Seniority Lists", path: "/seniority" },
         { icon: UserPlus, label: "Recruitment", path: "/recruitment" },
         { icon: MapPin, label: "Deputation", path: "/deputation" },
         { icon: UserMinus, label: "Exit/Retirement", path: "/exit-retirement" },
@@ -85,8 +101,8 @@ export const Sidebar = () => {
       id: "attendance",
       subItems: [
         { icon: UserCheck, label: "Daily Attendance", path: "/attendance" },
-        { icon: Clock, label: "Biometric Capture", path: "/biometric" },
-        { icon: Calendar, label: "Shift Management", path: "/shifts" },
+        { icon: Fingerprint, label: "Biometric Capture", path: "/biometric" },
+        { icon: CalendarClock, label: "Shift Management", path: "/shifts" },
         { icon: TrendingUp, label: "Overtime Tracking", path: "/overtime" },
       ]
     },
@@ -158,6 +174,7 @@ export const Sidebar = () => {
 
   const isPathActive = (path: string) => pathname === path;
   const isMenuExpanded = (menuId: string) => expandedMenus.includes(menuId);
+  const hasActiveSubItem = (subItems: any[]) => subItems?.some(item => isPathActive(item.path));
 
   return (
     <div className={`bg-white shadow-xl border-r border-gray-200 transition-all duration-300 ${isCollapsed ? 'w-16' : 'w-72'} min-h-screen flex flex-col fixed left-0 top-0 z-50`}>
@@ -193,7 +210,7 @@ export const Sidebar = () => {
       </div>
 
       {/* Navigation Menu */}
-      <ScrollArea className="flex-1 px-3 py-4">
+      <div className="flex-1 px-3 py-4 overflow-y-auto">
         <div className="space-y-1">
           {menuCategories.map((category) => {
             if (category.path) {
@@ -216,7 +233,7 @@ export const Sidebar = () => {
             } else {
               // Menu with sub-items
               const isExpanded = isMenuExpanded(category.id!);
-              const hasActiveSubItem = category.subItems?.some(item => isPathActive(item.path));
+              const hasActiveChild = hasActiveSubItem(category.subItems || []);
               
               return (
                 <div key={category.id} className="space-y-1">
@@ -224,7 +241,7 @@ export const Sidebar = () => {
                     variant="ghost"
                     onClick={() => !isCollapsed && toggleMenu(category.id!)}
                     className={`w-full justify-start text-left transition-all duration-200 ${
-                      hasActiveSubItem
+                      hasActiveChild
                         ? "bg-blue-50 text-blue-700 shadow-sm" 
                         : "text-gray-700 hover:text-blue-600 hover:bg-gray-50"
                     } ${isCollapsed ? 'px-2' : 'px-3'}`}
@@ -266,7 +283,7 @@ export const Sidebar = () => {
             }
           })}
         </div>
-      </ScrollArea>
+      </div>
 
       {/* Bottom Section */}
       <div className="p-3 border-t border-gray-200 bg-gray-50">

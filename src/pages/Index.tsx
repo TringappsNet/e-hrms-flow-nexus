@@ -73,31 +73,6 @@ const Index = () => {
   return (
     <AppLayout>
       <div className="space-y-8">
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-xl p-8 text-white shadow-xl">
-          <h1 className="text-4xl font-bold mb-3">
-            Welcome to E-HRMS Portal
-          </h1>
-          <p className="text-blue-100 text-lg opacity-90">
-            Comprehensive Human Resource Management System for Government Departments
-          </p>
-          <div className="mt-6 flex space-x-4">
-            <Button 
-              variant="secondary" 
-              onClick={() => navigate("/employees")}
-              className="bg-white text-blue-600 hover:bg-blue-50"
-            >
-              Manage Employees
-            </Button>
-            <Button 
-              variant="outline" 
-              onClick={() => navigate("/reports")}
-              className="border-white text-white hover:bg-white hover:text-blue-600"
-            >
-              View Reports
-            </Button>
-          </div>
-        </div>
-
         {/* Dashboard Stats */}
         <DashboardStats />
 

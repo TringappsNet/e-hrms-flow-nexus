@@ -434,7 +434,7 @@ const AnalyticsDashboard = () => {
                       </div>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span>Below Average (<2.5):</span>
+                      <span>Below Average (&lt;2.5):</span>
                       <div className="flex items-center space-x-2">
                         <div className="w-20 bg-gray-200 rounded-full h-2">
                           <div className="bg-red-600 h-2 rounded-full" style={{width: '5%'}}></div>

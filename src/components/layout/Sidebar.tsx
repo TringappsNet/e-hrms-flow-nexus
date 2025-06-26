@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Users,
   UserCheck,
@@ -193,7 +192,7 @@ export const Sidebar = ({ onCollapsedChange }: SidebarProps) => {
   const hasActiveSubItem = (subItems: any[]) => subItems?.some(item => isPathActive(item.path));
 
   return (
-    <div className={`bg-white shadow-xl border-r border-gray-200 ${isCollapsed ? 'w-16' : 'w-72'} h-screen flex flex-col fixed left-0 top-0 z-50`} style={{ transition: 'width 0.2s ease-in-out' }}>
+    <div className={`bg-white shadow-xl border-r border-gray-200 ${isCollapsed ? 'w-16' : 'w-80'} h-screen flex flex-col fixed left-0 top-0 z-50`}>
       {/* Header */}
       <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-blue-600 to-blue-700 flex-shrink-0">
         <div className="flex items-center justify-between">
@@ -225,8 +224,8 @@ export const Sidebar = ({ onCollapsedChange }: SidebarProps) => {
         </div>
       </div>
 
-      {/* Navigation Menu with ScrollArea */}
-      <ScrollArea className="flex-1 px-3 py-4">
+      {/* Navigation Menu with native scrolling */}
+      <div className="flex-1 px-3 py-4 overflow-y-auto">
         <div className="space-y-1">
           {menuCategories.map((category) => {
             if (category.path) {
@@ -241,7 +240,6 @@ export const Sidebar = ({ onCollapsedChange }: SidebarProps) => {
                       ? "bg-blue-50 text-blue-700 border-r-4 border-blue-600 shadow-sm font-medium" 
                       : "text-gray-700 hover:text-blue-600 hover:bg-gray-50"
                   } ${isCollapsed ? 'px-2' : 'px-3'}`}
-                  style={{ transition: 'none' }}
                 >
                   <category.icon className={`h-5 w-5 ${isCollapsed ? '' : 'mr-3'} flex-shrink-0`} />
                   {!isCollapsed && <span className="font-medium truncate">{category.label}</span>}
@@ -262,7 +260,6 @@ export const Sidebar = ({ onCollapsedChange }: SidebarProps) => {
                         ? "bg-blue-50 text-blue-700 shadow-sm font-medium" 
                         : "text-gray-700 hover:text-blue-600 hover:bg-gray-50"
                     } ${isCollapsed ? 'px-2' : 'px-3'}`}
-                    style={{ transition: 'none' }}
                   >
                     <category.icon className={`h-5 w-5 ${isCollapsed ? '' : 'mr-3'} flex-shrink-0`} />
                     {!isCollapsed && (
@@ -280,7 +277,7 @@ export const Sidebar = ({ onCollapsedChange }: SidebarProps) => {
                   </Button>
                   
                   {!isCollapsed && isExpanded && category.subItems && (
-                    <div className="ml-6 space-y-1 overflow-hidden">
+                    <div className="ml-6 space-y-1">
                       {category.subItems.map((subItem) => (
                         <Button
                           key={subItem.path}
@@ -291,7 +288,6 @@ export const Sidebar = ({ onCollapsedChange }: SidebarProps) => {
                               ? "bg-blue-100 text-blue-700 border-r-2 border-blue-500 font-medium" 
                               : "text-gray-600 hover:text-blue-600 hover:bg-gray-50"
                           } px-3 py-2`}
-                          style={{ transition: 'none' }}
                         >
                           <subItem.icon className="h-4 w-4 mr-3 flex-shrink-0" />
                           <span className="truncate">{subItem.label}</span>
@@ -304,7 +300,7 @@ export const Sidebar = ({ onCollapsedChange }: SidebarProps) => {
             }
           })}
         </div>
-      </ScrollArea>
+      </div>
 
       {/* Bottom Section */}
       <div className="p-3 border-t border-gray-200 bg-gray-50 flex-shrink-0">
@@ -312,7 +308,6 @@ export const Sidebar = ({ onCollapsedChange }: SidebarProps) => {
           <Button
             variant="ghost"
             className={`w-full justify-start relative text-gray-700 hover:text-blue-600 hover:bg-gray-100 ${isCollapsed ? 'px-2' : 'px-3'}`}
-            style={{ transition: 'none' }}
           >
             <Bell className={`h-5 w-5 ${isCollapsed ? '' : 'mr-3'} flex-shrink-0`} />
             {!isCollapsed && <span className="font-medium">Notifications</span>}
@@ -326,7 +321,6 @@ export const Sidebar = ({ onCollapsedChange }: SidebarProps) => {
               <Button
                 variant="ghost"
                 className={`w-full justify-start text-gray-700 hover:text-blue-600 hover:bg-gray-100 ${isCollapsed ? 'px-2' : 'px-3'}`}
-                style={{ transition: 'none' }}
               >
                 <User className={`h-5 w-5 ${isCollapsed ? '' : 'mr-3'} flex-shrink-0`} />
                 {!isCollapsed && <span className="font-medium">Admin</span>}

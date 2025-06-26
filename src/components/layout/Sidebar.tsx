@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -48,12 +47,21 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-export const Sidebar = () => {
+interface SidebarProps {
+  onCollapsedChange?: (collapsed: boolean) => void;
+}
+
+export const Sidebar = ({ onCollapsedChange }: SidebarProps) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [expandedMenus, setExpandedMenus] = useState<string[]>([]);
   const navigate = useNavigate();
   const location = useLocation();
   const pathname = location.pathname;
+
+  // Notify parent when collapse state changes
+  useEffect(() => {
+    onCollapsedChange?.(isCollapsed);
+  }, [isCollapsed, onCollapsedChange]);
 
   // Auto-expand menu if current path is in submenu
   useEffect(() => {
@@ -69,6 +77,10 @@ export const Sidebar = () => {
     };
     findParentMenu();
   }, [pathname]);
+
+  const toggleCollapse = () => {
+    setIsCollapsed(!isCollapsed);
+  };
 
   const toggleMenu = (menuId: string) => {
     setExpandedMenus(prev => 
@@ -181,7 +193,7 @@ export const Sidebar = () => {
   const hasActiveSubItem = (subItems: any[]) => subItems?.some(item => isPathActive(item.path));
 
   return (
-    <div className={`bg-white shadow-xl border-r border-gray-200 ${isCollapsed ? 'w-16' : 'w-72'} h-screen flex flex-col fixed left-0 top-0 z-50`}>
+    <div className={`bg-white shadow-xl border-r border-gray-200 ${isCollapsed ? 'w-16' : 'w-72'} h-screen flex flex-col fixed left-0 top-0 z-50`} style={{ transition: 'width 0.2s ease-in-out' }}>
       {/* Header */}
       <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-blue-600 to-blue-700 flex-shrink-0">
         <div className="flex items-center justify-between">
@@ -205,7 +217,7 @@ export const Sidebar = () => {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setIsCollapsed(!isCollapsed)}
+            onClick={toggleCollapse}
             className="ml-auto text-white hover:bg-blue-800"
           >
             {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
@@ -229,6 +241,7 @@ export const Sidebar = () => {
                       ? "bg-blue-50 text-blue-700 border-r-4 border-blue-600 shadow-sm font-medium" 
                       : "text-gray-700 hover:text-blue-600 hover:bg-gray-50"
                   } ${isCollapsed ? 'px-2' : 'px-3'}`}
+                  style={{ transition: 'none' }}
                 >
                   <category.icon className={`h-5 w-5 ${isCollapsed ? '' : 'mr-3'} flex-shrink-0`} />
                   {!isCollapsed && <span className="font-medium truncate">{category.label}</span>}
@@ -249,6 +262,7 @@ export const Sidebar = () => {
                         ? "bg-blue-50 text-blue-700 shadow-sm font-medium" 
                         : "text-gray-700 hover:text-blue-600 hover:bg-gray-50"
                     } ${isCollapsed ? 'px-2' : 'px-3'}`}
+                    style={{ transition: 'none' }}
                   >
                     <category.icon className={`h-5 w-5 ${isCollapsed ? '' : 'mr-3'} flex-shrink-0`} />
                     {!isCollapsed && (
@@ -277,6 +291,7 @@ export const Sidebar = () => {
                               ? "bg-blue-100 text-blue-700 border-r-2 border-blue-500 font-medium" 
                               : "text-gray-600 hover:text-blue-600 hover:bg-gray-50"
                           } px-3 py-2`}
+                          style={{ transition: 'none' }}
                         >
                           <subItem.icon className="h-4 w-4 mr-3 flex-shrink-0" />
                           <span className="truncate">{subItem.label}</span>
@@ -297,6 +312,7 @@ export const Sidebar = () => {
           <Button
             variant="ghost"
             className={`w-full justify-start relative text-gray-700 hover:text-blue-600 hover:bg-gray-100 ${isCollapsed ? 'px-2' : 'px-3'}`}
+            style={{ transition: 'none' }}
           >
             <Bell className={`h-5 w-5 ${isCollapsed ? '' : 'mr-3'} flex-shrink-0`} />
             {!isCollapsed && <span className="font-medium">Notifications</span>}
@@ -310,6 +326,7 @@ export const Sidebar = () => {
               <Button
                 variant="ghost"
                 className={`w-full justify-start text-gray-700 hover:text-blue-600 hover:bg-gray-100 ${isCollapsed ? 'px-2' : 'px-3'}`}
+                style={{ transition: 'none' }}
               >
                 <User className={`h-5 w-5 ${isCollapsed ? '' : 'mr-3'} flex-shrink-0`} />
                 {!isCollapsed && <span className="font-medium">Admin</span>}

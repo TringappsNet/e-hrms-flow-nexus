@@ -181,7 +181,7 @@ export const Sidebar = () => {
   const hasActiveSubItem = (subItems: any[]) => subItems?.some(item => isPathActive(item.path));
 
   return (
-    <div className={`bg-white shadow-xl border-r border-gray-200 ${isCollapsed ? 'w-16' : 'w-72'} h-screen flex flex-col fixed left-0 top-0 z-50 transition-none`}>
+    <div className={`bg-white shadow-xl border-r border-gray-200 ${isCollapsed ? 'w-16' : 'w-72'} h-screen flex flex-col fixed left-0 top-0 z-50`}>
       {/* Header */}
       <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-blue-600 to-blue-700 flex-shrink-0">
         <div className="flex items-center justify-between">
@@ -228,7 +228,7 @@ export const Sidebar = () => {
                     isPathActive(category.path)
                       ? "bg-blue-50 text-blue-700 border-r-4 border-blue-600 shadow-sm font-medium" 
                       : "text-gray-700 hover:text-blue-600 hover:bg-gray-50"
-                  } ${isCollapsed ? 'px-2' : 'px-3'} transition-none`}
+                  } ${isCollapsed ? 'px-2' : 'px-3'}`}
                 >
                   <category.icon className={`h-5 w-5 ${isCollapsed ? '' : 'mr-3'} flex-shrink-0`} />
                   {!isCollapsed && <span className="font-medium truncate">{category.label}</span>}
@@ -248,7 +248,7 @@ export const Sidebar = () => {
                       hasActiveChild
                         ? "bg-blue-50 text-blue-700 shadow-sm font-medium" 
                         : "text-gray-700 hover:text-blue-600 hover:bg-gray-50"
-                    } ${isCollapsed ? 'px-2' : 'px-3'} transition-none`}
+                    } ${isCollapsed ? 'px-2' : 'px-3'}`}
                   >
                     <category.icon className={`h-5 w-5 ${isCollapsed ? '' : 'mr-3'} flex-shrink-0`} />
                     {!isCollapsed && (
@@ -276,7 +276,7 @@ export const Sidebar = () => {
                             isPathActive(subItem.path)
                               ? "bg-blue-100 text-blue-700 border-r-2 border-blue-500 font-medium" 
                               : "text-gray-600 hover:text-blue-600 hover:bg-gray-50"
-                          } px-3 py-2 transition-none`}
+                          } px-3 py-2`}
                         >
                           <subItem.icon className="h-4 w-4 mr-3 flex-shrink-0" />
                           <span className="truncate">{subItem.label}</span>
@@ -296,7 +296,7 @@ export const Sidebar = () => {
         <div className="space-y-2">
           <Button
             variant="ghost"
-            className={`w-full justify-start relative text-gray-700 hover:text-blue-600 hover:bg-gray-100 ${isCollapsed ? 'px-2' : 'px-3'} transition-none`}
+            className={`w-full justify-start relative text-gray-700 hover:text-blue-600 hover:bg-gray-100 ${isCollapsed ? 'px-2' : 'px-3'}`}
           >
             <Bell className={`h-5 w-5 ${isCollapsed ? '' : 'mr-3'} flex-shrink-0`} />
             {!isCollapsed && <span className="font-medium">Notifications</span>}
@@ -309,7 +309,7 @@ export const Sidebar = () => {
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
-                className={`w-full justify-start text-gray-700 hover:text-blue-600 hover:bg-gray-100 ${isCollapsed ? 'px-2' : 'px-3'} transition-none`}
+                className={`w-full justify-start text-gray-700 hover:text-blue-600 hover:bg-gray-100 ${isCollapsed ? 'px-2' : 'px-3'}`}
               >
                 <User className={`h-5 w-5 ${isCollapsed ? '' : 'mr-3'} flex-shrink-0`} />
                 {!isCollapsed && <span className="font-medium">Admin</span>}

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -28,7 +29,7 @@ import {
   Plus,
   Save,
   X,
-  Print,
+  Printer,
   Share2,
   Clock,
   CheckCircle,
@@ -355,7 +356,7 @@ export const ServiceBookDetails: React.FC<ServiceBookDetailsProps> = ({ employee
           </div>
         </div>
         <div className="flex space-x-2">
-          <ActionButton icon={Print} label="Print" onClick={handlePrint} className="hover:bg-gray-50" />
+          <ActionButton icon={Printer} label="Print" onClick={handlePrint} className="hover:bg-gray-50" />
           <ActionButton icon={Share2} label="Share" onClick={handleShare} className="hover:bg-gray-50" />
           <ActionButton icon={Download} label="Download PDF" onClick={() => handleDownload('complete')} className="hover:bg-purple-50" />
           <ActionButton icon={Edit} label="Update Record" onClick={() => handleEdit('general')} variant="default" className="bg-blue-600 hover:bg-blue-700" />

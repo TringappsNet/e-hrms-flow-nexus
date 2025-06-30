@@ -1,9 +1,11 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { 
   User, 
   FileText, 
@@ -23,7 +25,14 @@ import {
   Edit,
   Download,
   Eye,
-  Plus
+  Plus,
+  Save,
+  X,
+  Print,
+  Share2,
+  Clock,
+  CheckCircle,
+  AlertCircle
 } from "lucide-react";
 
 interface ServiceBookData {
@@ -283,206 +292,301 @@ interface ServiceBookDetailsProps {
 
 export const ServiceBookDetails: React.FC<ServiceBookDetailsProps> = ({ employeeId, onBack }) => {
   const [activeTab, setActiveTab] = useState("personal");
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingSection, setEditingSection] = useState<string | null>(null);
   const data = mockServiceBookData; // In real app, fetch by employeeId
 
   const handleEdit = (section: string) => {
     console.log(`Edit ${section} for employee ${employeeId}`);
-    // Navigate to edit form
+    setEditingSection(section);
+    setIsEditing(true);
+  };
+
+  const handleSave = () => {
+    console.log('Saving changes');
+    setIsEditing(false);
+    setEditingSection(null);
+  };
+
+  const handleCancel = () => {
+    setIsEditing(false);
+    setEditingSection(null);
   };
 
   const handleDownload = (section: string) => {
     console.log(`Download ${section} for employee ${employeeId}`);
-    // Generate PDF/Excel download
   };
+
+  const handlePrint = () => {
+    console.log('Print service book');
+    window.print();
+  };
+
+  const handleShare = () => {
+    console.log('Share service book');
+  };
+
+  const handleAddRecord = (section: string) => {
+    console.log(`Add new record to ${section}`);
+  };
+
+  const ActionButton = ({ icon: Icon, label, onClick, variant = "outline", className = "" }: any) => (
+    <Button variant={variant} size="sm" onClick={onClick} className={`hover:scale-105 transition-transform ${className}`}>
+      <Icon className="h-3 w-3 mr-1" />
+      {label}
+    </Button>
+  );
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      {/* Enhanced Header */}
+      <div className="flex items-center justify-between bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-lg border">
         <div className="flex items-center space-x-4">
-          <Button variant="outline" onClick={onBack}>
-            ← Back
+          <Button variant="outline" onClick={onBack} className="hover:bg-white">
+            ← Back to List
           </Button>
           <div>
             <h2 className="text-2xl font-bold text-gray-900">{data.name}</h2>
-            <p className="text-gray-600">Employee ID: {data.employeeId} | {data.currentPosition}</p>
+            <div className="flex items-center space-x-4 mt-1">
+              <p className="text-gray-600">Employee ID: <span className="font-medium text-blue-600">{data.employeeId}</span></p>
+              <Badge className="bg-blue-100 text-blue-800">{data.currentPosition}</Badge>
+              <Badge className="bg-green-100 text-green-800">{data.department}</Badge>
+            </div>
           </div>
         </div>
         <div className="flex space-x-2">
-          <Button variant="outline">
-            <Download className="h-4 w-4 mr-2" />
-            Download Service Book
-          </Button>
-          <Button>
-            <Edit className="h-4 w-4 mr-2" />
-            Update Record
-          </Button>
+          <ActionButton icon={Print} label="Print" onClick={handlePrint} className="hover:bg-gray-50" />
+          <ActionButton icon={Share2} label="Share" onClick={handleShare} className="hover:bg-gray-50" />
+          <ActionButton icon={Download} label="Download PDF" onClick={() => handleDownload('complete')} className="hover:bg-purple-50" />
+          <ActionButton icon={Edit} label="Update Record" onClick={() => handleEdit('general')} variant="default" className="bg-blue-600 hover:bg-blue-700" />
         </div>
       </div>
 
+      {/* Enhanced Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList className="grid grid-cols-6 lg:grid-cols-12 w-full">
-          <TabsTrigger value="personal">Personal</TabsTrigger>
-          <TabsTrigger value="employment">Employment</TabsTrigger>
-          <TabsTrigger value="salary">Salary</TabsTrigger>
-          <TabsTrigger value="family">Family</TabsTrigger>
-          <TabsTrigger value="qualifications">Education</TabsTrigger>
-          <TabsTrigger value="medical">Medical</TabsTrigger>
-          <TabsTrigger value="awards">Awards</TabsTrigger>
-          <TabsTrigger value="documents">Documents</TabsTrigger>
-          <TabsTrigger value="assets">Assets</TabsTrigger>
-          <TabsTrigger value="activities">Activities</TabsTrigger>
-          <TabsTrigger value="training">Training</TabsTrigger>
-          <TabsTrigger value="appraisal">Appraisal</TabsTrigger>
-        </TabsList>
+        <div className="bg-white p-1 rounded-lg border shadow-sm overflow-x-auto">
+          <TabsList className="grid grid-cols-6 lg:grid-cols-12 w-full min-w-max gap-1">
+            <TabsTrigger value="personal" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Personal</TabsTrigger>
+            <TabsTrigger value="employment" className="data-[state=active]:bg-green-600 data-[state=active]:text-white">Employment</TabsTrigger>
+            <TabsTrigger value="salary" className="data-[state=active]:bg-purple-600 data-[state=active]:text-white">Salary</TabsTrigger>
+            <TabsTrigger value="family" className="data-[state=active]:bg-orange-600 data-[state=active]:text-white">Family</TabsTrigger>
+            <TabsTrigger value="qualifications" className="data-[state=active]:bg-indigo-600 data-[state=active]:text-white">Education</TabsTrigger>
+            <TabsTrigger value="medical" className="data-[state=active]:bg-red-600 data-[state=active]:text-white">Medical</TabsTrigger>
+            <TabsTrigger value="awards" className="data-[state=active]:bg-yellow-600 data-[state=active]:text-white">Awards</TabsTrigger>
+            <TabsTrigger value="documents" className="data-[state=active]:bg-gray-600 data-[state=active]:text-white">Documents</TabsTrigger>
+            <TabsTrigger value="assets" className="data-[state=active]:bg-teal-600 data-[state=active]:text-white">Assets</TabsTrigger>
+            <TabsTrigger value="activities" className="data-[state=active]:bg-pink-600 data-[state=active]:text-white">Activities</TabsTrigger>
+            <TabsTrigger value="training" className="data-[state=active]:bg-cyan-600 data-[state=active]:text-white">Training</TabsTrigger>
+            <TabsTrigger value="appraisal" className="data-[state=active]:bg-emerald-600 data-[state=active]:text-white">Appraisal</TabsTrigger>
+          </TabsList>
+        </div>
 
-        <TabsContent value="personal" className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <User className="h-5 w-5 mr-2" />
-                  Personal Information
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">Employee ID</label>
-                    <p className="font-medium">{data.employeeId}</p>
+        {/* Personal Information Tab */}
+        <TabsContent value="personal" className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card className="shadow-lg border-l-4 border-l-blue-500">
+              <CardHeader className="bg-blue-50">
+                <div className="flex justify-between items-center">
+                  <CardTitle className="flex items-center text-blue-900">
+                    <User className="h-5 w-5 mr-2" />
+                    Personal Information
+                  </CardTitle>
+                  <div className="flex space-x-1">
+                    <ActionButton icon={Edit} label="Edit" onClick={() => handleEdit('personal')} />
+                    <ActionButton icon={Download} label="Export" onClick={() => handleDownload('personal')} />
                   </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">Blood Group</label>
-                    <p className="font-medium">{data.bloodGroup}</p>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4 p-6">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <Label className="text-sm font-medium text-gray-500">Employee ID</Label>
+                    <p className="font-semibold text-blue-600">{data.employeeId}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-sm font-medium text-gray-500">Blood Group</Label>
+                    <div className="flex items-center">
+                      <Badge className="bg-red-100 text-red-800">{data.bloodGroup}</Badge>
+                    </div>
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-sm font-medium text-gray-500">Full Name</Label>
+                  <p className="font-semibold text-gray-900 text-lg">{data.name}</p>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="shadow-lg border-l-4 border-l-green-500">
+              <CardHeader className="bg-green-50">
+                <div className="flex justify-between items-center">
+                  <CardTitle className="flex items-center text-green-900">
+                    <MapPin className="h-5 w-5 mr-2" />
+                    Contact Information
+                  </CardTitle>
+                  <div className="flex space-x-1">
+                    <ActionButton icon={Edit} label="Edit" onClick={() => handleEdit('contact')} />
+                    <ActionButton icon={Download} label="Export" onClick={() => handleDownload('contact')} />
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4 p-6">
+                <div className="space-y-1">
+                  <Label className="text-sm font-medium text-gray-500">Local Address</Label>
+                  <p className="text-sm text-gray-700 leading-relaxed">{data.localAddress.address}</p>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <Label className="text-sm font-medium text-gray-500">Phone</Label>
+                    <p className="text-sm font-medium text-gray-900">{data.localAddress.phone}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-sm font-medium text-gray-500">Email</Label>
+                    <p className="text-sm font-medium text-blue-600">{data.localAddress.email}</p>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <MapPin className="h-5 w-5 mr-2" />
-                  Contact Information
-                </CardTitle>
+            <Card className="shadow-lg border-l-4 border-l-orange-500">
+              <CardHeader className="bg-orange-50">
+                <div className="flex justify-between items-center">
+                  <CardTitle className="flex items-center text-orange-900">
+                    <Phone className="h-5 w-5 mr-2" />
+                    Emergency Contact
+                  </CardTitle>
+                  <div className="flex space-x-1">
+                    <ActionButton icon={Edit} label="Edit" onClick={() => handleEdit('emergency')} />
+                    <ActionButton icon={Plus} label="Add" onClick={() => handleAddRecord('emergency')} />
+                  </div>
+                </div>
               </CardHeader>
-              <CardContent className="space-y-3">
-                <div>
-                  <label className="text-sm font-medium text-gray-500">Local Address</label>
-                  <p className="text-sm">{data.localAddress.address}</p>
-                </div>
+              <CardContent className="space-y-4 p-6">
                 <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">Phone</label>
-                    <p className="text-sm">{data.localAddress.phone}</p>
+                  <div className="space-y-1">
+                    <Label className="text-sm font-medium text-gray-500">Name</Label>
+                    <p className="font-semibold text-gray-900">{data.emergencyContact.name}</p>
                   </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">Email</label>
-                    <p className="text-sm">{data.localAddress.email}</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Phone className="h-5 w-5 mr-2" />
-                  Emergency Contact
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">Name</label>
-                    <p className="font-medium">{data.emergencyContact.name}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">Relation</label>
-                    <p className="font-medium">{data.emergencyContact.relation}</p>
+                  <div className="space-y-1">
+                    <Label className="text-sm font-medium text-gray-500">Relation</Label>
+                    <Badge variant="outline">{data.emergencyContact.relation}</Badge>
                   </div>
                 </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-500">Phone</label>
-                  <p className="text-sm">{data.emergencyContact.phone}</p>
+                <div className="space-y-1">
+                  <Label className="text-sm font-medium text-gray-500">Phone</Label>
+                  <p className="text-sm font-medium text-gray-900">{data.emergencyContact.phone}</p>
                 </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-500">Address</label>
-                  <p className="text-sm">{data.emergencyContact.address}</p>
+                <div className="space-y-1">
+                  <Label className="text-sm font-medium text-gray-500">Address</Label>
+                  <p className="text-sm text-gray-700">{data.emergencyContact.address}</p>
                 </div>
               </CardContent>
             </Card>
           </div>
         </TabsContent>
 
-        <TabsContent value="employment" className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Briefcase className="h-5 w-5 mr-2" />
-                  Current Position
-                </CardTitle>
+        {/* Employment History Tab */}
+        <TabsContent value="employment" className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card className="shadow-lg border-l-4 border-l-blue-500">
+              <CardHeader className="bg-blue-50">
+                <div className="flex justify-between items-center">
+                  <CardTitle className="flex items-center text-blue-900">
+                    <Briefcase className="h-5 w-5 mr-2" />
+                    Current Position
+                  </CardTitle>
+                  <ActionButton icon={Edit} label="Edit" onClick={() => handleEdit('position')} />
+                </div>
               </CardHeader>
-              <CardContent className="space-y-3">
-                <div>
-                  <label className="text-sm font-medium text-gray-500">Position</label>
-                  <p className="font-medium">{data.currentPosition}</p>
+              <CardContent className="space-y-4 p-6">
+                <div className="space-y-1">
+                  <Label className="text-sm font-medium text-gray-500">Position</Label>
+                  <p className="font-semibold text-lg text-gray-900">{data.currentPosition}</p>
                 </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-500">Department</label>
-                  <p className="text-sm">{data.department}</p>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <Label className="text-sm font-medium text-gray-500">Department</Label>
+                    <Badge className="bg-green-100 text-green-800">{data.department}</Badge>
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-sm font-medium text-gray-500">Section</Label>
+                    <p className="text-sm font-medium text-gray-900">{data.section}</p>
+                  </div>
                 </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-500">Section</label>
-                  <p className="text-sm">{data.section}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-500">Job Profile</label>
-                  <p className="text-sm">{data.jobProfile}</p>
+                <div className="space-y-1">
+                  <Label className="text-sm font-medium text-gray-500">Job Profile</Label>
+                  <p className="text-sm text-gray-700">{data.jobProfile}</p>
                 </div>
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Calendar className="h-5 w-5 mr-2" />
-                  Service Dates
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div>
-                  <label className="text-sm font-medium text-gray-500">Joining Date</label>
-                  <p className="font-medium">{new Date(data.joiningDate).toLocaleDateString()}</p>
+            <Card className="shadow-lg border-l-4 border-l-green-500">
+              <CardHeader className="bg-green-50">
+                <div className="flex justify-between items-center">
+                  <CardTitle className="flex items-center text-green-900">
+                    <Calendar className="h-5 w-5 mr-2" />
+                    Service Dates
+                  </CardTitle>
+                  <ActionButton icon={Edit} label="Edit" onClick={() => handleEdit('dates')} />
                 </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-500">Probation Confirmation</label>
-                  <p className="text-sm">{new Date(data.probationConfirmation).toLocaleDateString()}</p>
+              </CardHeader>
+              <CardContent className="space-y-4 p-6">
+                <div className="space-y-1">
+                  <Label className="text-sm font-medium text-gray-500">Joining Date</Label>
+                  <div className="flex items-center space-x-2">
+                    <Clock className="h-4 w-4 text-blue-600" />
+                    <p className="font-semibold text-gray-900">{new Date(data.joiningDate).toLocaleDateString('en-IN')}</p>
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-sm font-medium text-gray-500">Probation Confirmation</Label>
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    <p className="text-sm text-gray-700">{new Date(data.probationConfirmation).toLocaleDateString('en-IN')}</p>
+                  </div>
                 </div>
                 {data.resignationDate && (
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">Resignation Date</label>
-                    <p className="text-sm">{new Date(data.resignationDate).toLocaleDateString()}</p>
+                  <div className="space-y-1">
+                    <Label className="text-sm font-medium text-gray-500">Resignation Date</Label>
+                    <div className="flex items-center space-x-2">
+                      <AlertCircle className="h-4 w-4 text-red-600" />
+                      <p className="text-sm text-red-700">{new Date(data.resignationDate).toLocaleDateString('en-IN')}</p>
+                    </div>
                   </div>
                 )}
               </CardContent>
             </Card>
           </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Transfer History</CardTitle>
+          {/* Transfer History */}
+          <Card className="shadow-lg">
+            <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50">
+              <div className="flex justify-between items-center">
+                <CardTitle className="text-blue-900">Transfer History</CardTitle>
+                <div className="flex space-x-1">
+                  <ActionButton icon={Plus} label="Add Transfer" onClick={() => handleAddRecord('transfer')} />
+                  <ActionButton icon={Download} label="Export" onClick={() => handleDownload('transfers')} />
+                </div>
+              </div>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
+            <CardContent className="p-6">
+              <div className="space-y-4">
                 {data.transfers.map((transfer, index) => (
-                  <div key={index} className="border-l-2 border-blue-500 pl-4">
+                  <div key={index} className="border-l-4 border-blue-500 pl-4 bg-blue-50/50 p-4 rounded-r-lg">
                     <div className="flex justify-between items-start">
-                      <div>
-                        <p className="font-medium">{transfer.from} → {transfer.to}</p>
-                        <p className="text-sm text-gray-600">{transfer.reason}</p>
+                      <div className="flex-1">
+                        <p className="font-semibold text-gray-900">
+                          {transfer.from} → {transfer.to}
+                        </p>
+                        <p className="text-sm text-gray-600 mt-1">{transfer.reason}</p>
                       </div>
-                      <Badge variant="outline">{new Date(transfer.date).toLocaleDateString()}</Badge>
+                      <div className="text-right">
+                        <Badge variant="outline" className="mb-2">{new Date(transfer.date).toLocaleDateString('en-IN')}</Badge>
+                        <div className="flex space-x-1">
+                          <ActionButton icon={Edit} label="" onClick={() => handleEdit(`transfer-${index}`)} />
+                          <ActionButton icon={Download} label="" onClick={() => handleDownload(`transfer-${index}`)} />
+                        </div>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -490,20 +594,35 @@ export const ServiceBookDetails: React.FC<ServiceBookDetailsProps> = ({ employee
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Promotion History</CardTitle>
+          {/* Promotion History */}
+          <Card className="shadow-lg">
+            <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50">
+              <div className="flex justify-between items-center">
+                <CardTitle className="text-green-900">Promotion History</CardTitle>
+                <div className="flex space-x-1">
+                  <ActionButton icon={Plus} label="Add Promotion" onClick={() => handleAddRecord('promotion')} />
+                  <ActionButton icon={Download} label="Export" onClick={() => handleDownload('promotions')} />
+                </div>
+              </div>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
+            <CardContent className="p-6">
+              <div className="space-y-4">
                 {data.promotions.map((promotion, index) => (
-                  <div key={index} className="border-l-2 border-green-500 pl-4">
+                  <div key={index} className="border-l-4 border-green-500 pl-4 bg-green-50/50 p-4 rounded-r-lg">
                     <div className="flex justify-between items-start">
-                      <div>
-                        <p className="font-medium">{promotion.from} → {promotion.to}</p>
-                        <p className="text-sm text-gray-600">Order: {promotion.order}</p>
+                      <div className="flex-1">
+                        <p className="font-semibold text-gray-900">
+                          {promotion.from} → {promotion.to}
+                        </p>
+                        <p className="text-sm text-gray-600 mt-1">Order: {promotion.order}</p>
                       </div>
-                      <Badge className="bg-green-100 text-green-800">{new Date(promotion.date).toLocaleDateString()}</Badge>
+                      <div className="text-right">
+                        <Badge className="bg-green-100 text-green-800 mb-2">{new Date(promotion.date).toLocaleDateString('en-IN')}</Badge>
+                        <div className="flex space-x-1">
+                          <ActionButton icon={Edit} label="" onClick={() => handleEdit(`promotion-${index}`)} />
+                          <ActionButton icon={Download} label="" onClick={() => handleDownload(`promotion-${index}`)} />
+                        </div>
+                      </div>
                     </div>
                   </div>
                 ))}

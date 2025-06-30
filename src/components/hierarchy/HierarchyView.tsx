@@ -1,5 +1,4 @@
-
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,7 +13,9 @@ import {
   UserCheck,
   Briefcase,
   Search,
-  X
+  X,
+  Grid3X3,
+  List
 } from 'lucide-react';
 
 interface HierarchyNode {
@@ -332,17 +333,20 @@ interface HierarchyNodeProps {
   onToggle: (nodeId: string) => void;
   expandedNodes: Set<string>;
   searchTerm: string;
+  viewMode: 'tree' | 'compact';
 }
 
 const HierarchyNodeComponent: React.FC<HierarchyNodeProps> = ({ 
   node, 
   onToggle, 
   expandedNodes,
-  searchTerm 
+  searchTerm,
+  viewMode 
 }) => {
   const isExpanded = expandedNodes.has(node.id);
   const hasChildren = node.children && node.children.length > 0;
   const LevelIcon = getLevelIcon(node.level);
+  const nodeRef = useRef<HTMLDivElement>(null);
 
   // Check if this node or any of its children match the search
   const matchesSearch = (n: HierarchyNode, term: string): boolean => {
@@ -359,10 +363,91 @@ const HierarchyNodeComponent: React.FC<HierarchyNodeProps> = ({
 
   const shouldShow = matchesSearch(node, searchTerm);
   
+  // Scroll to this node if it matches the search term directly
+  useEffect(() => {
+    if (searchTerm && nodeRef.current) {
+      const lowerTerm = searchTerm.toLowerCase();
+      const nodeMatches = node.name.toLowerCase().includes(lowerTerm) || 
+                         node.position.toLowerCase().includes(lowerTerm) ||
+                         node.department.toLowerCase().includes(lowerTerm);
+      
+      if (nodeMatches) {
+        nodeRef.current.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'start',
+          inline: 'nearest'
+        });
+      }
+    }
+  }, [searchTerm, node.name, node.position, node.department]);
+  
   if (!shouldShow) return null;
 
+  if (viewMode === 'compact') {
+    return (
+      <div ref={nodeRef} className="w-full">
+        <Card className="mb-1 shadow-sm hover:shadow-md transition-shadow">
+          <CardContent className="p-2">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2 flex-1 min-w-0">
+                <div className="flex items-center space-x-1">
+                  <LevelIcon className="h-3 w-3 text-blue-600 flex-shrink-0" />
+                  <Badge variant="outline" className={`text-xs px-1 py-0 ${getLevelColor(node.level)}`}>
+                    L{node.level}
+                  </Badge>
+                </div>
+                
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-medium text-xs text-gray-900 truncate">{node.name}</h3>
+                  <p className="text-xs text-blue-600 truncate">{node.position}</p>
+                  <p className="text-xs text-gray-500 truncate">{node.department}</p>
+                </div>
+                
+                <div className="flex items-center space-x-1 text-xs text-gray-600 flex-shrink-0">
+                  <Users className="h-3 w-3" />
+                  <span>{node.employeeCount > 1000 ? `${(node.employeeCount/1000).toFixed(1)}k` : node.employeeCount}</span>
+                </div>
+              </div>
+              
+              {hasChildren && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => onToggle(node.id)}
+                  className="ml-1 p-0 h-5 w-5"
+                >
+                  {isExpanded ? (
+                    <ChevronDown className="h-3 w-3" />
+                  ) : (
+                    <ChevronRight className="h-3 w-3" />
+                  )}
+                </Button>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+        
+        {hasChildren && isExpanded && (
+          <div className="ml-3 border-l border-gray-200 pl-2">
+            {node.children!.map((child) => (
+              <HierarchyNodeComponent
+                key={child.id}
+                node={child}
+                onToggle={onToggle}
+                expandedNodes={expandedNodes}
+                searchTerm={searchTerm}
+                viewMode={viewMode}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Default tree view
   return (
-    <div className="w-full">
+    <div ref={nodeRef} className="w-full">
       <Card className="mb-2 shadow-sm hover:shadow-md transition-shadow">
         <CardContent className="p-3">
           <div className="flex items-center justify-between">
@@ -415,6 +500,7 @@ const HierarchyNodeComponent: React.FC<HierarchyNodeProps> = ({
               onToggle={onToggle}
               expandedNodes={expandedNodes}
               searchTerm={searchTerm}
+              viewMode={viewMode}
             />
           ))}
         </div>
@@ -426,6 +512,7 @@ const HierarchyNodeComponent: React.FC<HierarchyNodeProps> = ({
 export const HierarchyView: React.FC = () => {
   const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set(['1']));
   const [searchTerm, setSearchTerm] = useState('');
+  const [viewMode, setViewMode] = useState<'tree' | 'compact'>('compact');
 
   const handleToggle = (nodeId: string) => {
     setExpandedNodes(prev => {
@@ -461,35 +548,36 @@ export const HierarchyView: React.FC = () => {
     setSearchTerm('');
   };
 
-  // Auto-expand nodes that match search
+  // Auto-expand nodes that match search and their ancestors
   const expandMatchingNodes = useMemo(() => {
     if (!searchTerm) return;
     
-    const findMatchingNodes = (node: HierarchyNode, term: string): string[] => {
+    const findMatchingNodesWithAncestors = (node: HierarchyNode, term: string, ancestors: string[] = []): string[] => {
       const matchingIds: string[] = [];
       const lowerTerm = term.toLowerCase();
       
-      const checkNode = (n: HierarchyNode, ancestors: string[] = []): void => {
-        const nodeMatches = n.name.toLowerCase().includes(lowerTerm) || 
-                           n.position.toLowerCase().includes(lowerTerm) ||
-                           n.department.toLowerCase().includes(lowerTerm);
-        
-        if (nodeMatches) {
-          matchingIds.push(...ancestors, n.id);
-        }
-        
-        if (n.children) {
-          n.children.forEach(child => {
-            checkNode(child, [...ancestors, n.id]);
-          });
-        }
-      };
+      const nodeMatches = node.name.toLowerCase().includes(lowerTerm) || 
+                         node.position.toLowerCase().includes(lowerTerm) ||
+                         node.department.toLowerCase().includes(lowerTerm);
       
-      checkNode(node);
-      return matchingIds;
+      if (nodeMatches) {
+        // Add all ancestors and this node
+        matchingIds.push(...ancestors, node.id);
+      }
+      
+      if (node.children) {
+        node.children.forEach(child => {
+          const childMatches = findMatchingNodesWithAncestors(child, term, [...ancestors, node.id]);
+          if (childMatches.length > 0) {
+            matchingIds.push(...childMatches);
+          }
+        });
+      }
+      
+      return [...new Set(matchingIds)]; // Remove duplicates
     };
     
-    const matchingIds = findMatchingNodes(mockHierarchyData, searchTerm);
+    const matchingIds = findMatchingNodesWithAncestors(mockHierarchyData, searchTerm);
     if (matchingIds.length > 0) {
       setExpandedNodes(prev => new Set([...prev, ...matchingIds]));
     }
@@ -509,6 +597,24 @@ export const HierarchyView: React.FC = () => {
               </p>
             </div>
             <div className="flex space-x-2">
+              <div className="flex border rounded-md">
+                <Button 
+                  variant={viewMode === 'tree' ? 'default' : 'ghost'} 
+                  size="sm"
+                  onClick={() => setViewMode('tree')}
+                  className="rounded-r-none"
+                >
+                  <List className="h-4 w-4" />
+                </Button>
+                <Button 
+                  variant={viewMode === 'compact' ? 'default' : 'ghost'} 
+                  size="sm"
+                  onClick={() => setViewMode('compact')}
+                  className="rounded-l-none"
+                >
+                  <Grid3X3 className="h-4 w-4" />
+                </Button>
+              </div>
               <Button variant="outline" size="sm" onClick={expandAll}>
                 Expand All
               </Button>
@@ -548,6 +654,7 @@ export const HierarchyView: React.FC = () => {
               onToggle={handleToggle}
               expandedNodes={expandedNodes}
               searchTerm={searchTerm}
+              viewMode={viewMode}
             />
           </div>
         </CardContent>

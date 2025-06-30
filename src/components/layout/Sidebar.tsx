@@ -108,6 +108,7 @@ export const Sidebar = ({ onCollapsedChange }: SidebarProps) => {
         { icon: UserPlus, label: "Recruitment", path: "/recruitment" },
         { icon: MapPin, label: "Deputation", path: "/deputation" },
         { icon: UserMinus, label: "Exit/Retirement", path: "/exit-retirement" },
+        { icon: Building, label: "Hierarchy View", path: "/hierarchy" },
       ]
     },
     {

@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -36,6 +35,7 @@ import MedicalClaims from "./pages/MedicalClaims";
 import MedicalReimbursements from "./pages/MedicalReimbursements";
 import AnalyticsDashboard from "./pages/AnalyticsDashboard";
 import NotFound from "./pages/NotFound";
+import HierarchyManagement from "./pages/HierarchyManagement";
 
 const queryClient = new QueryClient();
 
@@ -55,6 +55,7 @@ const App = () => (
           <Route path="/recruitment" element={<Recruitment />} />
           <Route path="/deputation" element={<Deputation />} />
           <Route path="/exit-retirement" element={<ExitRetirement />} />
+          <Route path="/hierarchy" element={<HierarchyManagement />} />
           <Route path="/attendance" element={<AttendanceManagement />} />
           <Route path="/biometric" element={<BiometricCapture />} />
           <Route path="/shifts" element={<ShiftManagement />} />

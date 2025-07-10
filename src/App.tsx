@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -208,11 +209,6 @@ const App = () => (
                 <MedicalReimbursements />
               </ProtectedRoute>
             } />
-            <Route path="/grievances" element={
-              <ProtectedRoute requireAdmin>
-                <GrievanceManagement />
-              </ProtectedRoute>
-            } />
             <Route path="/reports" element={
               <ProtectedRoute requireAdmin>
                 <ReportsManagement />
@@ -221,6 +217,13 @@ const App = () => (
             <Route path="/analytics" element={
               <ProtectedRoute requireAdmin>
                 <AnalyticsDashboard />
+              </ProtectedRoute>
+            } />
+
+            {/* Shared Routes - Both Admin and Employee */}
+            <Route path="/grievances" element={
+              <ProtectedRoute>
+                <GrievanceManagement />
               </ProtectedRoute>
             } />
 

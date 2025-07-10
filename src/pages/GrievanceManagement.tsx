@@ -6,9 +6,12 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { MessageSquare, Plus, Search, Filter, Eye, MessageCircle } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "@/hooks/use-toast";
 
 const GrievanceManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const { user, isAdmin } = useAuth();
 
   const grievances = [
     {
@@ -49,7 +52,12 @@ const GrievanceManagement = () => {
     }
   ];
 
-  const filteredGrievances = grievances.filter(grievance =>
+  // Filter grievances based on user role
+  const userGrievances = isAdmin 
+    ? grievances 
+    : grievances.filter(grievance => grievance.employeeId === user?.employeeId);
+
+  const filteredGrievances = userGrievances.filter(grievance =>
     grievance.employeeName.toLowerCase().includes(searchTerm.toLowerCase()) ||
     grievance.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     grievance.category.toLowerCase().includes(searchTerm.toLowerCase())
@@ -74,12 +82,51 @@ const GrievanceManagement = () => {
     return priorityColors[priority as keyof typeof priorityColors] || 'bg-gray-100 text-gray-800';
   };
 
+  const handleNewGrievance = () => {
+    toast({
+      title: "New Grievance",
+      description: "Opening grievance form...",
+    });
+  };
+
+  const handleViewDetails = (grievanceId: string) => {
+    toast({
+      title: "View Details",
+      description: `Opening details for grievance ${grievanceId}`,
+    });
+  };
+
+  const handleAddComment = (grievanceId: string) => {
+    toast({
+      title: "Add Comment",
+      description: `Adding comment to grievance ${grievanceId}`,
+    });
+  };
+
+  const handleUpdateStatus = (grievanceId: string) => {
+    toast({
+      title: "Update Status",
+      description: `Updating status for grievance ${grievanceId}`,
+    });
+  };
+
+  const handleFilter = () => {
+    toast({
+      title: "Filter",
+      description: "Opening filter options...",
+    });
+  };
+
   return (
     <AppLayout>
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">Grievance Management</h2>
-          <p className="text-gray-600">Handle employee grievances and complaints</p>
+          <h2 className="text-3xl font-bold text-gray-900 mb-2">
+            {isAdmin ? 'Grievance Management' : 'My Grievances'}
+          </h2>
+          <p className="text-gray-600">
+            {isAdmin ? 'Handle employee grievances and complaints' : 'View and manage your grievances'}
+          </p>
         </div>
 
         <Card>
@@ -88,11 +135,13 @@ const GrievanceManagement = () => {
               <div>
                 <CardTitle className="flex items-center">
                   <MessageSquare className="h-5 w-5 mr-2 text-blue-600" />
-                  Grievance Cases
+                  {isAdmin ? 'Grievance Cases' : 'My Grievance Cases'}
                 </CardTitle>
-                <CardDescription>Track and resolve employee grievances</CardDescription>
+                <CardDescription>
+                  {isAdmin ? 'Track and resolve employee grievances' : 'Track your submitted grievances'}
+                </CardDescription>
               </div>
-              <Button>
+              <Button onClick={handleNewGrievance}>
                 <Plus className="h-4 w-4 mr-2" />
                 New Grievance
               </Button>
@@ -111,60 +160,67 @@ const GrievanceManagement = () => {
                   />
                 </div>
               </div>
-              <Button variant="outline">
+              <Button variant="outline" onClick={handleFilter}>
                 <Filter className="h-4 w-4 mr-2" />
                 Filter
               </Button>
             </div>
 
             <div className="space-y-4">
-              {filteredGrievances.map((grievance) => (
-                <Card key={grievance.id} className="hover:shadow-md transition-shadow">
-                  <CardContent className="p-6">
-                    <div className="flex justify-between items-start mb-4">
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-2 mb-2">
-                          <h3 className="font-semibold text-lg">{grievance.title}</h3>
-                          <Badge className={getPriorityBadge(grievance.priority)} variant="secondary">
-                            {grievance.priority}
-                          </Badge>
+              {filteredGrievances.length === 0 ? (
+                <div className="text-center py-8">
+                  <MessageSquare className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+                  <p className="text-gray-500">No grievances found</p>
+                </div>
+              ) : (
+                filteredGrievances.map((grievance) => (
+                  <Card key={grievance.id} className="hover:shadow-md transition-shadow">
+                    <CardContent className="p-6">
+                      <div className="flex justify-between items-start mb-4">
+                        <div className="flex-1">
+                          <div className="flex items-center space-x-2 mb-2">
+                            <h3 className="font-semibold text-lg">{grievance.title}</h3>
+                            <Badge className={getPriorityBadge(grievance.priority)} variant="secondary">
+                              {grievance.priority}
+                            </Badge>
+                          </div>
+                          <p className="text-sm text-gray-600 mb-2">{grievance.description}</p>
+                          <div className="flex items-center space-x-4 text-sm text-gray-500">
+                            <span><strong>ID:</strong> {grievance.id}</span>
+                            {isAdmin && <span><strong>Employee:</strong> {grievance.employeeName}</span>}
+                            <span><strong>Category:</strong> {grievance.category}</span>
+                            <span><strong>Date:</strong> {new Date(grievance.dateRaised).toLocaleDateString()}</span>
+                          </div>
                         </div>
-                        <p className="text-sm text-gray-600 mb-2">{grievance.description}</p>
-                        <div className="flex items-center space-x-4 text-sm text-gray-500">
-                          <span><strong>ID:</strong> {grievance.id}</span>
-                          <span><strong>Employee:</strong> {grievance.employeeName}</span>
-                          <span><strong>Category:</strong> {grievance.category}</span>
-                          <span><strong>Date:</strong> {new Date(grievance.dateRaised).toLocaleDateString()}</span>
-                        </div>
+                        <Badge className={getStatusBadge(grievance.status)} variant="secondary">
+                          {grievance.status}
+                        </Badge>
                       </div>
-                      <Badge className={getStatusBadge(grievance.status)} variant="secondary">
-                        {grievance.status}
-                      </Badge>
-                    </div>
-                    
-                    <div className="flex justify-between items-center pt-4 border-t">
-                      <span className="text-sm text-gray-600">
-                        <strong>Assigned to:</strong> {grievance.assignedTo}
-                      </span>
-                      <div className="flex space-x-2">
-                        <Button variant="outline" size="sm">
-                          <Eye className="h-3 w-3 mr-1" />
-                          View Details
-                        </Button>
-                        <Button variant="outline" size="sm">
-                          <MessageCircle className="h-3 w-3 mr-1" />
-                          Add Comment
-                        </Button>
-                        {grievance.status !== 'Resolved' && grievance.status !== 'Closed' && (
-                          <Button size="sm">
-                            Update Status
+                      
+                      <div className="flex justify-between items-center pt-4 border-t">
+                        <span className="text-sm text-gray-600">
+                          <strong>Assigned to:</strong> {grievance.assignedTo}
+                        </span>
+                        <div className="flex space-x-2">
+                          <Button variant="outline" size="sm" onClick={() => handleViewDetails(grievance.id)}>
+                            <Eye className="h-3 w-3 mr-1" />
+                            View Details
                           </Button>
-                        )}
+                          <Button variant="outline" size="sm" onClick={() => handleAddComment(grievance.id)}>
+                            <MessageCircle className="h-3 w-3 mr-1" />
+                            Add Comment
+                          </Button>
+                          {(isAdmin || grievance.status !== 'Resolved') && grievance.status !== 'Closed' && (
+                            <Button size="sm" onClick={() => handleUpdateStatus(grievance.id)}>
+                              Update Status
+                            </Button>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+                    </CardContent>
+                  </Card>
+                ))
+              )}
             </div>
           </CardContent>
         </Card>

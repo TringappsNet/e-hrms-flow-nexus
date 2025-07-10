@@ -8,10 +8,25 @@ import { RecentActivities } from "@/components/dashboard/RecentActivities";
 import { QuickActions } from "@/components/dashboard/QuickActions";
 import { PayrollOverview } from "@/components/dashboard/PayrollOverview";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { useEffect } from "react";
 import { Users, Calendar, Award, DollarSign, Package, MessageSquare, BarChart3, TrendingUp } from "lucide-react";
 
 const Index = () => {
   const navigate = useNavigate();
+  const { isAdmin, isEmployee } = useAuth();
+
+  useEffect(() => {
+    // Redirect employees to their dashboard
+    if (isEmployee) {
+      navigate('/employee-dashboard');
+    }
+  }, [isEmployee, navigate]);
+
+  // Only show admin dashboard content for admins
+  if (!isAdmin) {
+    return null;
+  }
 
   const quickAccessCards = [
     {
@@ -78,7 +93,7 @@ const Index = () => {
 
         {/* Quick Access Cards */}
         <div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Quick Access</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Admin Quick Access</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {quickAccessCards.map((card) => (
               <Card 

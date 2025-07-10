@@ -1,8 +1,13 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "@/contexts/AuthContext";
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 import Index from "./pages/Index";
 import EmployeeManagement from "./pages/EmployeeManagement";
 import AttendanceManagement from "./pages/AttendanceManagement";
@@ -36,6 +41,7 @@ import MedicalReimbursements from "./pages/MedicalReimbursements";
 import AnalyticsDashboard from "./pages/AnalyticsDashboard";
 import NotFound from "./pages/NotFound";
 import HierarchyManagement from "./pages/HierarchyManagement";
+import EmployeeDashboard from "./pages/EmployeeDashboard";
 
 const queryClient = new QueryClient();
 
@@ -44,43 +50,187 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/employees" element={<EmployeeManagement />} />
-          <Route path="/service-book" element={<ServiceBook />} />
-          <Route path="/promotions" element={<Promotions />} />
-          <Route path="/performance" element={<Performance />} />
-          <Route path="/seniority" element={<SeniorityLists />} />
-          <Route path="/recruitment" element={<Recruitment />} />
-          <Route path="/deputation" element={<Deputation />} />
-          <Route path="/exit-retirement" element={<ExitRetirement />} />
-          <Route path="/hierarchy" element={<HierarchyManagement />} />
-          <Route path="/attendance" element={<AttendanceManagement />} />
-          <Route path="/biometric" element={<BiometricCapture />} />
-          <Route path="/shifts" element={<ShiftManagement />} />
-          <Route path="/overtime" element={<OvertimeTracking />} />
-          <Route path="/leave" element={<LeaveManagement />} />
-          <Route path="/leave-encashment" element={<LeaveEncashment />} />
-          <Route path="/travel" element={<TravelManagement />} />
-          <Route path="/training" element={<TrainingManagement />} />
-          <Route path="/certifications" element={<Certifications />} />
-          <Route path="/payroll" element={<PayrollManagement />} />
-          <Route path="/salary-structure" element={<SalaryStructure />} />
-          <Route path="/salary-slips" element={<SalarySlips />} />
-          <Route path="/tax-management" element={<TaxManagement />} />
-          <Route path="/bonuses-loans" element={<BonusesLoans />} />
-          <Route path="/final-settlement" element={<FinalSettlement />} />
-          <Route path="/assets" element={<AssetManagement />} />
-          <Route path="/transfers" element={<TransferManagement />} />
-          <Route path="/medical-claims" element={<MedicalClaims />} />
-          <Route path="/reimbursements" element={<MedicalReimbursements />} />
-          <Route path="/grievances" element={<GrievanceManagement />} />
-          <Route path="/reports" element={<ReportsManagement />} />
-          <Route path="/analytics" element={<AnalyticsDashboard />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
+      <AuthProvider>
+        <BrowserRouter>
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            
+            {/* Protected Routes - Admin Only */}
+            <Route path="/" element={
+              <ProtectedRoute requireAdmin>
+                <Index />
+              </ProtectedRoute>
+            } />
+            <Route path="/employees" element={
+              <ProtectedRoute requireAdmin>
+                <EmployeeManagement />
+              </ProtectedRoute>
+            } />
+            <Route path="/service-book" element={
+              <ProtectedRoute requireAdmin>
+                <ServiceBook />
+              </ProtectedRoute>
+            } />
+            <Route path="/promotions" element={
+              <ProtectedRoute requireAdmin>
+                <Promotions />
+              </ProtectedRoute>
+            } />
+            <Route path="/performance" element={
+              <ProtectedRoute requireAdmin>
+                <Performance />
+              </ProtectedRoute>
+            } />
+            <Route path="/seniority" element={
+              <ProtectedRoute requireAdmin>
+                <SeniorityLists />
+              </ProtectedRoute>
+            } />
+            <Route path="/recruitment" element={
+              <ProtectedRoute requireAdmin>
+                <Recruitment />
+              </ProtectedRoute>
+            } />
+            <Route path="/deputation" element={
+              <ProtectedRoute requireAdmin>
+                <Deputation />
+              </ProtectedRoute>
+            } />
+            <Route path="/exit-retirement" element={
+              <ProtectedRoute requireAdmin>
+                <ExitRetirement />
+              </ProtectedRoute>
+            } />
+            <Route path="/hierarchy" element={
+              <ProtectedRoute requireAdmin>
+                <HierarchyManagement />
+              </ProtectedRoute>
+            } />
+            <Route path="/attendance" element={
+              <ProtectedRoute requireAdmin>
+                <AttendanceManagement />
+              </ProtectedRoute>
+            } />
+            <Route path="/biometric" element={
+              <ProtectedRoute requireAdmin>
+                <BiometricCapture />
+              </ProtectedRoute>
+            } />
+            <Route path="/shifts" element={
+              <ProtectedRoute requireAdmin>
+                <ShiftManagement />
+              </ProtectedRoute>
+            } />
+            <Route path="/overtime" element={
+              <ProtectedRoute requireAdmin>
+                <OvertimeTracking />
+              </ProtectedRoute>
+            } />
+            <Route path="/leave" element={
+              <ProtectedRoute requireAdmin>
+                <LeaveManagement />
+              </ProtectedRoute>
+            } />
+            <Route path="/leave-encashment" element={
+              <ProtectedRoute requireAdmin>
+                <LeaveEncashment />
+              </ProtectedRoute>
+            } />
+            <Route path="/travel" element={
+              <ProtectedRoute requireAdmin>
+                <TravelManagement />
+              </ProtectedRoute>
+            } />
+            <Route path="/training" element={
+              <ProtectedRoute requireAdmin>
+                <TrainingManagement />
+              </ProtectedRoute>
+            } />
+            <Route path="/certifications" element={
+              <ProtectedRoute requireAdmin>
+                <Certifications />
+              </ProtectedRoute>
+            } />
+            <Route path="/payroll" element={
+              <ProtectedRoute requireAdmin>
+                <PayrollManagement />
+              </ProtectedRoute>
+            } />
+            <Route path="/salary-structure" element={
+              <ProtectedRoute requireAdmin>
+                <SalaryStructure />
+              </ProtectedRoute>
+            } />
+            <Route path="/salary-slips" element={
+              <ProtectedRoute requireAdmin>
+                <SalarySlips />
+              </ProtectedRoute>
+            } />
+            <Route path="/tax-management" element={
+              <ProtectedRoute requireAdmin>
+                <TaxManagement />
+              </ProtectedRoute>
+            } />
+            <Route path="/bonuses-loans" element={
+              <ProtectedRoute requireAdmin>
+                <BonusesLoans />
+              </ProtectedRoute>
+            } />
+            <Route path="/final-settlement" element={
+              <ProtectedRoute requireAdmin>
+                <FinalSettlement />
+              </ProtectedRoute>
+            } />
+            <Route path="/assets" element={
+              <ProtectedRoute requireAdmin>
+                <AssetManagement />
+              </ProtectedRoute>
+            } />
+            <Route path="/transfers" element={
+              <ProtectedRoute requireAdmin>
+                <TransferManagement />
+              </ProtectedRoute>
+            } />
+            <Route path="/medical-claims" element={
+              <ProtectedRoute requireAdmin>
+                <MedicalClaims />
+              </ProtectedRoute>
+            } />
+            <Route path="/reimbursements" element={
+              <ProtectedRoute requireAdmin>
+                <MedicalReimbursements />
+              </ProtectedRoute>
+            } />
+            <Route path="/grievances" element={
+              <ProtectedRoute requireAdmin>
+                <GrievanceManagement />
+              </ProtectedRoute>
+            } />
+            <Route path="/reports" element={
+              <ProtectedRoute requireAdmin>
+                <ReportsManagement />
+              </ProtectedRoute>
+            } />
+            <Route path="/analytics" element={
+              <ProtectedRoute requireAdmin>
+                <AnalyticsDashboard />
+              </ProtectedRoute>
+            } />
+
+            {/* Employee Dashboard */}
+            <Route path="/employee-dashboard" element={
+              <ProtectedRoute>
+                <EmployeeDashboard />
+              </ProtectedRoute>
+            } />
+
+            {/* 404 */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );

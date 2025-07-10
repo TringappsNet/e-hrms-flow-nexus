@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -39,6 +40,7 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -56,6 +58,7 @@ export const Sidebar = ({ onCollapsedChange }: SidebarProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   const pathname = location.pathname;
+  const { user, isAdmin, logout } = useAuth();
 
   // Notify parent when collapse state changes
   useEffect(() => {
@@ -93,7 +96,13 @@ export const Sidebar = ({ onCollapsedChange }: SidebarProps) => {
     navigate(path);
   };
 
-  const menuCategories = [
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
+  // Admin menu categories
+  const adminMenuCategories = [
     { icon: Home, label: "Dashboard", path: "/" },
     {
       icon: Users,
@@ -187,6 +196,20 @@ export const Sidebar = ({ onCollapsedChange }: SidebarProps) => {
       ]
     },
   ];
+
+  // Employee menu categories (simplified)
+  const employeeMenuCategories = [
+    { icon: Home, label: "Dashboard", path: "/employee-dashboard" },
+    { icon: User, label: "My Profile", path: "/my-profile" },
+    { icon: Calendar, label: "My Attendance", path: "/my-attendance" },
+    { icon: FileText, label: "Leave Application", path: "/my-leave" },
+    { icon: CreditCard, label: "Pay Slips", path: "/my-payslips" },
+    { icon: Award, label: "My Performance", path: "/my-performance" },
+    { icon: BookOpen, label: "Training Records", path: "/my-training" },
+    { icon: MessageSquare, label: "Grievances", path: "/grievances" },
+  ];
+
+  const menuCategories = isAdmin ? adminMenuCategories : employeeMenuCategories;
 
   const isPathActive = (path: string) => pathname === path;
   const isMenuExpanded = (menuId: string) => expandedMenus.includes(menuId);
@@ -324,7 +347,7 @@ export const Sidebar = ({ onCollapsedChange }: SidebarProps) => {
                 className={`w-full justify-start text-gray-700 hover:text-blue-600 hover:bg-gray-100 ${isCollapsed ? 'px-2' : 'px-3'}`}
               >
                 <User className={`h-5 w-5 ${isCollapsed ? '' : 'mr-3'} flex-shrink-0`} />
-                {!isCollapsed && <span className="font-medium">Admin</span>}
+                {!isCollapsed && <span className="font-medium">{user?.name || 'User'}</span>}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
@@ -332,7 +355,7 @@ export const Sidebar = ({ onCollapsedChange }: SidebarProps) => {
                 <Settings className="h-4 w-4 mr-2" />
                 Settings
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={handleLogout}>
                 <LogOut className="h-4 w-4 mr-2" />
                 Logout
               </DropdownMenuItem>

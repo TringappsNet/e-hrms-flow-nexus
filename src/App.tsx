@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -42,6 +41,8 @@ import AnalyticsDashboard from "./pages/AnalyticsDashboard";
 import NotFound from "./pages/NotFound";
 import HierarchyManagement from "./pages/HierarchyManagement";
 import EmployeeDashboard from "./pages/EmployeeDashboard";
+import MyProfile from "./pages/MyProfile";
+import MyPerformance from "./pages/MyPerformance";
 
 const queryClient = new QueryClient();
 
@@ -219,10 +220,20 @@ const App = () => (
               </ProtectedRoute>
             } />
 
-            {/* Employee Dashboard */}
+            {/* Employee Routes */}
             <Route path="/employee-dashboard" element={
               <ProtectedRoute>
                 <EmployeeDashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/my-profile" element={
+              <ProtectedRoute>
+                <MyProfile />
+              </ProtectedRoute>
+            } />
+            <Route path="/my-performance" element={
+              <ProtectedRoute>
+                <MyPerformance />
               </ProtectedRoute>
             } />
 

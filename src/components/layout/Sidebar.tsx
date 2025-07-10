@@ -52,6 +52,25 @@ interface SidebarProps {
   onCollapsedChange?: (collapsed: boolean) => void;
 }
 
+interface MenuItemWithSubItems {
+  icon: any;
+  label: string;
+  id: string;
+  subItems: Array<{
+    icon: any;
+    label: string;
+    path: string;
+  }>;
+}
+
+interface MenuItemWithPath {
+  icon: any;
+  label: string;
+  path: string;
+}
+
+type MenuItem = MenuItemWithSubItems | MenuItemWithPath;
+
 export const Sidebar = ({ onCollapsedChange }: SidebarProps) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [expandedMenus, setExpandedMenus] = useState<string[]>([]);
@@ -69,10 +88,10 @@ export const Sidebar = ({ onCollapsedChange }: SidebarProps) => {
   useEffect(() => {
     const findParentMenu = () => {
       for (const category of menuCategories) {
-        if (category.subItems) {
+        if ('subItems' in category && category.subItems) {
           const hasActiveSubItem = category.subItems.some(item => pathname === item.path);
-          if (hasActiveSubItem && !expandedMenus.includes(category.id!)) {
-            setExpandedMenus(prev => [...prev, category.id!]);
+          if (hasActiveSubItem && !expandedMenus.includes(category.id)) {
+            setExpandedMenus(prev => [...prev, category.id]);
           }
         }
       }
@@ -102,7 +121,7 @@ export const Sidebar = ({ onCollapsedChange }: SidebarProps) => {
   };
 
   // Admin menu categories
-  const adminMenuCategories = [
+  const adminMenuCategories: MenuItem[] = [
     { icon: Home, label: "Dashboard", path: "/" },
     {
       icon: Users,
@@ -198,7 +217,7 @@ export const Sidebar = ({ onCollapsedChange }: SidebarProps) => {
   ];
 
   // Employee menu categories (simplified)
-  const employeeMenuCategories = [
+  const employeeMenuCategories: MenuItem[] = [
     { icon: Home, label: "Dashboard", path: "/employee-dashboard" },
     { icon: User, label: "My Profile", path: "/my-profile" },
     { icon: Calendar, label: "My Attendance", path: "/my-attendance" },
@@ -251,8 +270,8 @@ export const Sidebar = ({ onCollapsedChange }: SidebarProps) => {
       {/* Navigation Menu with native scrolling */}
       <div className="flex-1 px-3 py-4 overflow-y-auto">
         <div className="space-y-1">
-          {menuCategories.map((category) => {
-            if (category.path) {
+          {menuCategories.map((category, index) => {
+            if ('path' in category) {
               // Single menu item
               return (
                 <Button
@@ -271,14 +290,14 @@ export const Sidebar = ({ onCollapsedChange }: SidebarProps) => {
               );
             } else {
               // Menu with sub-items
-              const isExpanded = isMenuExpanded(category.id!);
+              const isExpanded = isMenuExpanded(category.id);
               const hasActiveChild = hasActiveSubItem(category.subItems || []);
               
               return (
                 <div key={category.id} className="space-y-1">
                   <Button
                     variant="ghost"
-                    onClick={() => !isCollapsed && toggleMenu(category.id!)}
+                    onClick={() => !isCollapsed && toggleMenu(category.id)}
                     className={`w-full justify-start text-left ${
                       hasActiveChild
                         ? "bg-blue-50 text-blue-700 shadow-sm font-medium" 

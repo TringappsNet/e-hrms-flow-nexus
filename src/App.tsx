@@ -43,6 +43,10 @@ import HierarchyManagement from "./pages/HierarchyManagement";
 import EmployeeDashboard from "./pages/EmployeeDashboard";
 import MyProfile from "./pages/MyProfile";
 import MyPerformance from "./pages/MyPerformance";
+import MyAttendance from "./pages/MyAttendance";
+import MyLeave from "./pages/MyLeave";
+import MyPayslips from "./pages/MyPayslips";
+import MyTraining from "./pages/MyTraining";
 
 const queryClient = new QueryClient();
 
@@ -231,9 +235,29 @@ const App = () => (
                 <MyProfile />
               </ProtectedRoute>
             } />
+            <Route path="/my-attendance" element={
+              <ProtectedRoute>
+                <MyAttendance />
+              </ProtectedRoute>
+            } />
+            <Route path="/my-leave" element={
+              <ProtectedRoute>
+                <MyLeave />
+              </ProtectedRoute>
+            } />
+            <Route path="/my-payslips" element={
+              <ProtectedRoute>
+                <MyPayslips />
+              </ProtectedRoute>
+            } />
             <Route path="/my-performance" element={
               <ProtectedRoute>
                 <MyPerformance />
+              </ProtectedRoute>
+            } />
+            <Route path="/my-training" element={
+              <ProtectedRoute>
+                <MyTraining />
               </ProtectedRoute>
             } />
 

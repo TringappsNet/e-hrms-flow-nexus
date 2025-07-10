@@ -5,15 +5,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { AppLayout } from "@/components/layout/AppLayout";
-import { mockLeaveApplications, LeaveApplication, mockEmployees } from "@/data/mockData";
+import { mockLeaveApplications, LeaveApplication } from "@/data/mockData";
 import { LeaveForm } from "@/components/leave/LeaveForm";
 import { Calendar, Plus, Search, Filter } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const LeaveManagement = () => {
   const [leaveApplications, setLeaveApplications] = useState<LeaveApplication[]>(mockLeaveApplications);
   const [searchTerm, setSearchTerm] = useState("");
   const [showForm, setShowForm] = useState(false);
-  const [selectedApplication, setSelectedApplication] = useState<LeaveApplication | null>(null);
+  const { toast } = useToast();
 
   const filteredApplications = leaveApplications.filter(application =>
     application.employeeName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -21,13 +22,57 @@ const LeaveManagement = () => {
     application.status.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleAddApplication = (applicationData: Omit<LeaveApplication, 'id'>) => {
+  const handleAddApplication = (applicationData: Omit<LeaveApplication, 'id' | 'appliedDate'>) => {
     const newApplication: LeaveApplication = {
       ...applicationData,
-      id: (leaveApplications.length + 1).toString()
+      id: (leaveApplications.length + 1).toString(),
+      appliedDate: new Date().toISOString()
     };
     setLeaveApplications([...leaveApplications, newApplication]);
     setShowForm(false);
+    
+    toast({
+      title: "Leave Application Added",
+      description: "New leave application has been added successfully.",
+    });
+  };
+
+  const handleApprove = (id: string) => {
+    setLeaveApplications(prev => 
+      prev.map(app => 
+        app.id === id ? { ...app, status: 'Approved' as const } : app
+      )
+    );
+    toast({
+      title: "Leave Approved",
+      description: `Leave application ${id} has been approved.`,
+    });
+  };
+
+  const handleReject = (id: string) => {
+    setLeaveApplications(prev => 
+      prev.map(app => 
+        app.id === id ? { ...app, status: 'Rejected' as const } : app
+      )
+    );
+    toast({
+      title: "Leave Rejected",
+      description: `Leave application ${id} has been rejected.`,
+    });
+  };
+
+  const handleView = (id: string) => {
+    toast({
+      title: "Leave Details",
+      description: `Viewing details for leave application ${id}`,
+    });
+  };
+
+  const handleFilter = () => {
+    toast({
+      title: "Filter Options",
+      description: "Filter functionality would open here.",
+    });
   };
 
   const getStatusBadge = (status: string) => {
@@ -89,7 +134,7 @@ const LeaveManagement = () => {
                   />
                 </div>
               </div>
-              <Button variant="outline">
+              <Button variant="outline" onClick={handleFilter}>
                 <Filter className="h-4 w-4 mr-2" />
                 Filter
               </Button>
@@ -125,15 +170,15 @@ const LeaveManagement = () => {
                       </td>
                       <td className="py-3 px-4">
                         <div className="flex space-x-2">
-                          <Button variant="outline" size="sm">
+                          <Button variant="outline" size="sm" onClick={() => handleView(application.id)}>
                             View
                           </Button>
                           {application.status === 'Pending' && (
                             <>
-                              <Button size="sm">
+                              <Button size="sm" onClick={() => handleApprove(application.id)}>
                                 Approve
                               </Button>
-                              <Button variant="destructive" size="sm">
+                              <Button variant="destructive" size="sm" onClick={() => handleReject(application.id)}>
                                 Reject
                               </Button>
                             </>

@@ -1,13 +1,20 @@
 
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AppLayout } from "@/components/layout/AppLayout";
+import { LeaveForm } from "@/components/leave/LeaveForm";
 import { Calendar, Plus, FileText } from "lucide-react";
+import { LeaveApplication } from "@/data/mockData";
+import { useToast } from "@/hooks/use-toast";
 
 const MyLeave = () => {
+  const [showForm, setShowForm] = useState(false);
+  const { toast } = useToast();
+
   // Mock leave data
-  const leaveApplications = [
+  const [leaveApplications, setLeaveApplications] = useState([
     {
       id: 1,
       type: "Annual Leave",
@@ -35,13 +42,53 @@ const MyLeave = () => {
       status: "Pending",
       reason: "Personal work"
     }
-  ];
+  ]);
 
   const leaveBalance = {
     annual: { total: 21, used: 5, remaining: 16 },
     sick: { total: 12, used: 1, remaining: 11 },
     casual: { total: 7, used: 2, remaining: 5 }
   };
+
+  const handleAddApplication = (applicationData: Omit<LeaveApplication, 'id' | 'appliedDate'>) => {
+    const newApplication = {
+      id: leaveApplications.length + 1,
+      type: applicationData.leaveType,
+      fromDate: applicationData.startDate,
+      toDate: applicationData.endDate,
+      days: applicationData.days,
+      status: applicationData.status,
+      reason: applicationData.reason
+    };
+    
+    setLeaveApplications([...leaveApplications, newApplication]);
+    setShowForm(false);
+    
+    toast({
+      title: "Leave Application Submitted",
+      description: "Your leave application has been submitted successfully and is pending approval.",
+    });
+  };
+
+  const handleViewDetails = (leaveId: number) => {
+    toast({
+      title: "Leave Details",
+      description: `Viewing details for leave application #${leaveId}`,
+    });
+  };
+
+  if (showForm) {
+    return (
+      <AppLayout>
+        <div className="p-8">
+          <LeaveForm
+            onSubmit={handleAddApplication}
+            onCancel={() => setShowForm(false)}
+          />
+        </div>
+      </AppLayout>
+    );
+  }
 
   return (
     <AppLayout>
@@ -51,7 +98,7 @@ const MyLeave = () => {
             <h2 className="text-3xl font-bold text-gray-900 mb-2">My Leave</h2>
             <p className="text-gray-600">Manage your leave applications and view balance</p>
           </div>
-          <Button>
+          <Button onClick={() => setShowForm(true)}>
             <Plus className="h-4 w-4 mr-2" />
             Apply for Leave
           </Button>
@@ -126,7 +173,7 @@ const MyLeave = () => {
                     </p>
                     <p className="text-sm text-gray-500">{leave.reason}</p>
                   </div>
-                  <Button variant="outline" size="sm">
+                  <Button variant="outline" size="sm" onClick={() => handleViewDetails(leave.id)}>
                     View Details
                   </Button>
                 </div>
